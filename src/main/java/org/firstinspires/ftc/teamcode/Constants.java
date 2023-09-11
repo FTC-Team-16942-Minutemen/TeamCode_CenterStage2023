@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robots;
+package org.firstinspires.ftc.teamcode;
 
 public final class Constants
 {
@@ -11,16 +11,4 @@ public final class Constants
         RED_LEFT_AUTO
     }
 
-    public enum LinearSlideState {
-        JUNCTIONLEVEL,
-        SCORING,
-        ACQUIRED,
-        STACKLEVEL,
-        GROUNDLEVEL
-    }
-
-    public enum OperatorMode {
-        SINGLE_OPERATOR_MODE,
-        DOUBLE_OPERATOR_MODE
-    }
 }
