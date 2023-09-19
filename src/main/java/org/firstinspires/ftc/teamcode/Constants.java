@@ -11,4 +11,6 @@ public final class Constants
         RED_LEFT_AUTO
     }
 
+    public boolean FIELD_CENTRIC_ENABLED = true;
+    public boolean ROBOT_CENTRIC_ENABLED = false;
 }

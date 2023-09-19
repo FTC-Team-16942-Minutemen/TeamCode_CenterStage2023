@@ -29,14 +29,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.arcrobotics.ftclib.command.Robot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
-import org.firstinspires.ftc.teamcode.robots.Constants;
-import org.firstinspires.ftc.teamcode.robots.PowerPlayBot;
 
 /*
 TeleOp OpMode script using Command-based Robot
@@ -49,34 +43,21 @@ public class TeleOp_OpMode extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        //Robot initial pose
-        Pose2d initialPose = PoseStorage.currentPose;
-        double allianceHeadingOffset = PoseStorage.allianceHeadingOffset;
-
         //Instantiate the robot
-        PowerPlayBot m_robot = new PowerPlayBot(
+        RobotContainer m_robot = new RobotContainer(
                 Constants.OpModeType.TELEOP,
                 hardwareMap,
                 telemetry,
                 gamepad1,
-                gamepad2,
-                initialPose,
-                allianceHeadingOffset);
+                gamepad2);
 
         //Wait for driver to press PLAY and then STOP
         waitForStart();
-
-        //Disable the parking detection pipeline and start the parking timer countdown
-        m_robot.disableVision();
 
         // Run the robot until the end of the match (or until the driver presses STOP)
         while (opModeIsActive() && !isStopRequested())
         {
             m_robot.run();
         }
-
-        //Reset the PoseStorage in case we have to start over
-        PoseStorage.currentPose = new Pose2d(new Vector2d( 0.0, 0.0), 0.0);
-        m_robot.reset();
     }
 }

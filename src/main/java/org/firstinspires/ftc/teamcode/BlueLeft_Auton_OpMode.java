@@ -29,15 +29,9 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
-import org.firstinspires.ftc.teamcode.robots.Constants;
-import org.firstinspires.ftc.teamcode.robots.PowerPlayBot;
-import org.firstinspires.ftc.teamcode.subsystems.DistancelocalizerSubsystem;
+import org.firstinspires.ftc.teamcode.Constants;
 
 /*
 Autonomous OpMode script using Command-based Robot
@@ -45,47 +39,26 @@ Autonomous OpMode script using Command-based Robot
 
 @Autonomous(name="BlueLeft_Auton", group="Autonomous")
 //@Disabled
-public class BlueLeft_Auton extends LinearOpMode {
+public class BlueLeft_Auton_OpMode extends LinearOpMode {
 
     @Override
     public void runOpMode() {
 
-        //Initialize the robot's Pose
-//        Pose2d initialPose = new Pose2d(new Vector2d( 35.0, 60.0), -90.0);
-       // Pose2d initialPose = new Pose2d(new Vector2d( 40.5, 65.0), Math.toRadians(-90.0));
-//        Pose2d initialPose = new Pose2d(new Vector2d( 36, 65.0), Math.toRadians(180.0));
-        Pose2d initialPose = new Pose2d(new Vector2d(32.5 , 64.8), Math.toRadians(90.0));
-       // Pose2d initialPose = new Pose2d(DistancelocalizerSubsystem.class.);
-        //Instantiate the robot
-        PowerPlayBot m_robot = new PowerPlayBot(
+        RobotContainer m_robot = new RobotContainer(
                 Constants.OpModeType.BLUE_LEFT_AUTO,
                 hardwareMap,
                 telemetry,
                 gamepad1,
-                gamepad2,
-                initialPose, 0.0);
-
-        getRuntime();
+                gamepad2);
 
         //Wait for driver to press PLAY
         waitForStart();
 
-        //reset the runtime timer
-//        resetRuntime();
-
-        //Disable the parking detection pipeline and start the parking timer countdown
-        m_robot.disableVision();
-
         // Run the robot until the end of the match (or until the driver presses STOP)
         while (opModeIsActive() && !isStopRequested())
         {
-//            m_robot.setCurrentTime(getRuntime());
             m_robot.run();
         }
 
-        //Store the last post of the robot to a static
-        PoseStorage.currentPose = m_robot.getRobotPose();
-        PoseStorage.allianceHeadingOffset = -90.0; //blue side
-        m_robot.reset();
     }
 }
