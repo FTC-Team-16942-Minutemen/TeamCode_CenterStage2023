@@ -6,11 +6,14 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.Robot;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.autons.BlueRightAuton;
+import org.firstinspires.ftc.teamcode.commands.DriveCommand;
+import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 
 @Config
 public class RobotContainer extends Robot {
@@ -19,6 +22,7 @@ public class RobotContainer extends Robot {
     Telemetry m_telemetry;
     GamepadEx m_gamePad1;
     GamepadEx m_gamePad2;
+    DriveSubsystem m_driveTrain;
 
     //Subsystems
 //    DriveSubsystem m_driveTrain; // TODO make a Drivetrain Subsystem
@@ -37,7 +41,7 @@ public class RobotContainer extends Robot {
 
         //Setup the FTC dashboard with it's enhanced telemetry
         m_telemetry = new MultipleTelemetry(m_telemetry, FtcDashboard.getInstance().getTelemetry());
-
+        m_driveTrain = new DriveSubsystem(m_hardwareMap, m_telemetry);
         //Initialize Subsystems
 //        m_driveTrain = new DriveSubsystem(m_hardwareMap, m_telemetry, initialPose, allianceHeadingOffset);
 
@@ -88,12 +92,12 @@ public class RobotContainer extends Robot {
     private void setupTeleOp()
     {
 
-//        m_driveTrain.setDefaultCommand(new DriveCommand(m_driveTrain,
-//                ()->m_gamePad1.getLeftY(),
-//                ()->-m_gamePad1.getLeftX(),
-//                ()->-m_gamePad1.getRightX(),
-//                ()->m_gamePad1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER),
-//                Constants));
+        m_driveTrain.setDefaultCommand(new DriveCommand(m_driveTrain,
+                ()->m_gamePad1.getLeftY(),
+                ()->-m_gamePad1.getLeftX(),
+                ()->-m_gamePad1.getRightX(),
+               ()->m_gamePad1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER),
+                true));
 
 //        m_gamePad1.getGamepadButton(GamepadKeys.Button.Y)
 //                        .whenPressed(new InstantCommand(() -> {m_clawIntakeSubsystem.actuate();}));
