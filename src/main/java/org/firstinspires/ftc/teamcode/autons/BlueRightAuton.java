@@ -15,6 +15,7 @@ public class BlueRightAuton {
     {
            return new SequentialCommandGroup(
                    new WaitCommand(250)
+
                 //write your auton here as a huge command sequential command group (i.e. series of commands)
            );
     }
