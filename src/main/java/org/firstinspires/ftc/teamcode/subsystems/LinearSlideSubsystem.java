@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Constants;
@@ -26,9 +27,11 @@ public class LinearSlideSubsystem extends SubsystemBase {
         linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         linearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         linearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
-
         linearSlide.setPower(1.0);
         linearSlide.setTargetPosition(0);
+        MotorConfigurationType motorConfigurationType = linearSlide.getMotorType();
+        motorConfigurationType.setAchieveableMaxRPMFraction(0.99);
+        motorConfigurationType.setMaxRPM(435);
     }
 
     public void extendToTarget(int target,double power)

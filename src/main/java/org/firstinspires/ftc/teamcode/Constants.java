@@ -31,6 +31,8 @@ public final class Constants
     public static final double MAX_ACHIEVABLE_RPM_FRACTION = 0.6; //Should be between 0 and 1
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
 
+    public static final double TICKS_PER_REV_ENCODER = 2000;
+
     //Constants used for mecanum kinematic modeling
     public static double WHEEL_RADIUS = 48e-3; //radius of one mecanum wheel (in m)
     public static double TRACK_WIDTH = 317.2e-3; //distance between both front wheels (in m) (or both rear wheel)

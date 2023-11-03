@@ -41,11 +41,11 @@ public class CassetSubsystem extends SubsystemBase {
     public double getCassetPosition(){return m_position;}
     @Override
     public void periodic() {
-        m_cassetServo.setPosition(m_position);
-        m_cassetServo.scaleRange(minScale, maxScale);
-//
-        m_telemetry.addData("Servo Pos: ", m_cassetServo.getPosition());
-        m_telemetry.addData("Set Position: ", m_position);
-        m_telemetry.update();
+//        m_cassetServo.setPosition(m_position);
+//        m_cassetServo.scaleRange(minScale, maxScale);
+////
+//        m_telemetry.addData("Servo Pos: ", m_cassetServo.getPosition());
+//        m_telemetry.addData("Set Position: ", m_position);
+//        m_telemetry.update();
     }
 }

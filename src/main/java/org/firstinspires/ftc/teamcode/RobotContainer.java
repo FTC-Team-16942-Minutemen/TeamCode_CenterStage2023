@@ -65,6 +65,8 @@ public class RobotContainer extends Robot {
         m_driveSS = new DriveSubsystem(m_hardwareMap, m_telemetry);
         m_poseEstimationSS = new PoseEstimationSubsystem(m_hardwareMap, m_telemetry);
 
+        m_poseEstimationSS.reset(0,0);
+
         m_cassetSubsystem = new CassetSubsystem(m_hardwareMap, m_telemetry,0.0);
         m_linearSlideSubsystem = new LinearSlideSubsystem(m_hardwareMap,m_telemetry);
           m_intakeSubsystem = new IntakeSubsystem(m_hardwareMap, m_telemetry);
