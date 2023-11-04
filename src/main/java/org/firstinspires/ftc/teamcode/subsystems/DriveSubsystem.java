@@ -104,7 +104,7 @@ public class DriveSubsystem extends SubsystemBase {
         }
     }
 
-    public void drive(double leftX, double leftY, double rightX, double throttle, double currentHeading)
+    public void drive(double leftX, double leftY, double rightX, double currentHeading, double throttle)
     {
         double throttleSlope = 1 - Constants.THROTTLEMINLEVEL;
         double throttleScale = throttleSlope * throttle + Constants.THROTTLEMINLEVEL;
@@ -114,6 +114,19 @@ public class DriveSubsystem extends SubsystemBase {
                         leftY * throttleScale,
                         leftX * throttleScale,
                         rightX * throttleScale,
+                        new Rotation2d(currentHeading)));
+        wheelSpeeds.normalize(1.0);
+        setMotorPowers(wheelSpeeds);
+    }
+    public void drive(double leftX, double leftY, double rightX, double currentHeading)
+    {
+
+
+        MecanumDriveWheelSpeeds wheelSpeeds = m_normalizedMecanumDriveKinematics.toWheelSpeeds(
+                ChassisSpeeds.fromFieldRelativeSpeeds(
+                        leftY,
+                        leftX ,
+                        rightX,
                         new Rotation2d(currentHeading)));
         wheelSpeeds.normalize(1.0);
         setMotorPowers(wheelSpeeds);

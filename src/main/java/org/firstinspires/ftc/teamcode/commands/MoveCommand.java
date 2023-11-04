@@ -20,6 +20,7 @@ public class MoveCommand extends CommandBase {
     PIDController x;
     PIDController y;
     PIDController heading;
+    Pose2d m_pose;
 
     public MoveCommand(DriveSubsystem driveSubsystem,
                        PoseEstimationSubsystem poseEstimationSubsystem,
@@ -46,12 +47,12 @@ public class MoveCommand extends CommandBase {
     }
         @Override
     public void execute(){
-        Pose2d pose = m_poseEstimationSubsystem.positionEstimation();
+         m_pose = m_poseEstimationSubsystem.positionEstimation();
 
 
-        m_driveSubsystem.drive(x.calculate(pose.getX() ,m_goX),
-                y.calculate(pose.getY(), m_goY),
-                heading.calculate(pose.getHeading(), m_angle));
+        m_driveSubsystem.drive(x.calculate(m_pose.getX() ,m_goX),
+                y.calculate(m_pose.getY(), m_goY),
+                heading.calculate(m_pose.getHeading(), m_angle), m_pose.getHeading());
 
 
 
