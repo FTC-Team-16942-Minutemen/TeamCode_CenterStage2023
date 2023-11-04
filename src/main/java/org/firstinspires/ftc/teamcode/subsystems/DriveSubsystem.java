@@ -119,6 +119,7 @@ public class DriveSubsystem extends SubsystemBase {
         setMotorPowers(wheelSpeeds);
     }
 
+
     private void setMotorPowers(MecanumDriveWheelSpeeds wheelSpeeds)
     {
         frontLeft.setPower(wheelSpeeds.frontLeftMetersPerSecond);
@@ -159,6 +160,7 @@ public class DriveSubsystem extends SubsystemBase {
 
         //Apply the computed encoder tick rotations to the wheel position PID controller
         setMotorMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        setMotorMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontLeft.setTargetPosition(frontLeftTicks);
         frontRight.setTargetPosition(frontRightTicks);
         rearLeft.setTargetPosition(rearLeftTicks);

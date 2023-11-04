@@ -18,6 +18,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.autons.BlueRightAuton;
 import org.firstinspires.ftc.teamcode.commands.DriveCommand;
 //import org.firstinspires.ftc.teamcode.commands.MoveCommand;
+import org.firstinspires.ftc.teamcode.commands.MoveCommand;
 import org.firstinspires.ftc.teamcode.subsystems.CassetSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
@@ -153,8 +154,8 @@ public class RobotContainer extends Robot {
 //        m_gamePad1.getGamepadButton(GamepadKeys.Button.B)
 //                .whenPressed(new MoveCommand(0,-0.30159289474,0.7, m_driveSS));
 
-//        m_gamePad1.getGamepadButton(GamepadKeys.Button.B)
-//                .whenPressed(new InstantCommand(() -> {m_turntableSubsystem.actuate();}));
+//        m_gamePad1.getGamepadButton(GamepadKeys.Button.Y)
+//                .whenPressed(new MoveCommand(m_driveSS, m_poseEstimationSS, 0,5,0));
 
 //        m_gamePad1.getGamepadButton(GamepadKeys.Button.DPAD_UP)
 //                .whenPressed(new InstantCommand(() -> {m_turntableSubsystem.faceForward();}));
@@ -165,7 +166,11 @@ public class RobotContainer extends Robot {
 
     private void setupBlueRight_Auton()
     {
-        BlueRightAuton blueRightAuton = new BlueRightAuton(); //TODO add the injected subsystems here
+        BlueRightAuton blueRightAuton = new BlueRightAuton(m_driveSS,
+                                                              m_poseEstimationSS,
+                                                               m_linearSlideSubsystem,
+                                                                           m_cassetSubsystem,
+                                                                m_intakeSubsystem); //TODO add the injected subsystems here
         CommandScheduler.getInstance().schedule(blueRightAuton.generate());
     }
 

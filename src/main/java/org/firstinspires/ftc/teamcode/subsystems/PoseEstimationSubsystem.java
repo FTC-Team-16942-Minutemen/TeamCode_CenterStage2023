@@ -41,6 +41,9 @@ public class PoseEstimationSubsystem extends SubsystemBase {
     public static double prependicularEncoderPosition = 0;
     public static double parallelEncoderPosition = 0;
 
+    public static double offsetParallel = 1.5;
+    public static double offsetPrependicular = 2;
+
 
     public PoseEstimationSubsystem(HardwareMap hardwareMap, Telemetry telemetry)
     {
@@ -105,6 +108,11 @@ public class PoseEstimationSubsystem extends SubsystemBase {
 
         return new Pose2d(new Translation2d(x/2000 * 1.88976,y/2000 * 1.88976),new Rotation2d(heading));
 
+    }
+
+
+    public double getHeadingAsDouble(Pose2d positionEstimation){
+        return positionEstimation.getHeading();
     }
 
     public Pose2d getPose()
