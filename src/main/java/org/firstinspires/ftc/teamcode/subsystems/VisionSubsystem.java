@@ -2,10 +2,12 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.subsystems.visionpipelines.BlueDetectPipeline;
 import org.firstinspires.ftc.teamcode.subsystems.visionpipelines.RedDetectPipeline;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -19,6 +21,9 @@ public class VisionSubsystem extends SubsystemBase {
     OpenCvWebcam m_webcam;
     RedDetectPipeline m_redImagePipeline;
     Boolean m_showStage = Boolean.TRUE;
+    Pose2d deposit1;
+    Pose2d deposit2;
+    Pose2d deposit3;
 
 
     public VisionSubsystem(HardwareMap hardwareMap, Telemetry telemetry)
@@ -50,7 +55,9 @@ public class VisionSubsystem extends SubsystemBase {
 
     @Override
     public void periodic()
+
     {
+        m_telemetry.addData("Location", getLocation());
         if(m_showStage) {
 //            m_telemetry.addData("Location:", m_redImagePipeline.getLocation());
             m_telemetry.update();
@@ -63,8 +70,22 @@ public class VisionSubsystem extends SubsystemBase {
         m_showStage = Boolean.FALSE;
     }
 
-    public int getLocation(){
-        return 0;
-//        return m_redImagePipeline.getLocation();
+    public Pose2d getLocation(){
+
+            if (m_redImagePipeline.getLocation() == 0)//magenta
+            {
+                return deposit1;
+            }
+            else if (m_redImagePipeline.getLocation() == 1) //green
+            {
+                return deposit2;            }
+            else if (m_redImagePipeline.getLocation() == 2) //cyan
+            {
+                return deposit3;            }
+            return deposit1;
     }
+
+
+
+
 }

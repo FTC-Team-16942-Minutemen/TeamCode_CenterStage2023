@@ -27,11 +27,11 @@ public class PlaneLauncherSubsystem extends SubsystemBase {
 
 
     public void shoot() {
-        m_position = 0.0;
+        m_position = 0.5;
     }
 
     public void reload() {
-        m_position = 1.0;
+        m_position = 0.0;
     }
 
     public void actuate()

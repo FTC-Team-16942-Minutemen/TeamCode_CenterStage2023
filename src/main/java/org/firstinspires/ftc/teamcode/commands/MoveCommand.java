@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.commands;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.geometry.Pose2d;
@@ -8,7 +9,7 @@ import com.qualcomm.robotcore.hardware.PIDCoefficients;
 
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.PoseEstimationSubsystem;
-
+@Config
 public class MoveCommand extends CommandBase {
 
 
@@ -38,25 +39,31 @@ public class MoveCommand extends CommandBase {
     public void initialize() {
 
 
-        m_driveSubsystem.setMotorPowers(0.05);
-        x = new PIDController(5,0,0);
-        y = new PIDController(5,0,0);
-        heading = new PIDController(5,0,0);
+        m_driveSubsystem.setMotorPowers(0.5);
+        x = new PIDController(9,0,0);
+        y = new PIDController(9,0,0);
+        heading = new PIDController(9,0,0);
 
 
     }
         @Override
-    public void execute(){
-         m_pose = m_poseEstimationSubsystem.positionEstimation();
+    public void execute() {
 
-
-        m_driveSubsystem.drive(x.calculate(m_pose.getX() ,m_goX),
-                y.calculate(m_pose.getY(), m_goY),
-                heading.calculate(m_pose.getHeading(), m_angle), m_pose.getHeading());
+            m_pose = m_poseEstimationSubsystem.positionEstimation();
+            while (!(m_pose.getX() >= m_goX - 0.1 && m_pose.getX() <= m_goX + 0.1 && m_pose.getY() >= m_goY - 0.1 && m_pose.getY() <= m_goY + 0.1)) {
+                m_pose = m_poseEstimationSubsystem.positionEstimation();
 
 
 
+                m_driveSubsystem.drive(x.calculate(m_pose.getX(), m_goX),
+                        y.calculate(m_pose.getY(), m_goY),
+                        heading.calculate(m_pose.getHeading(), m_angle), m_pose.getHeading());
+            }
+            end(true);
         }
+
+
+
         @Override
     public boolean isFinished(){
 

@@ -6,6 +6,8 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.Robot;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.hardware.bosch.BHI260IMU;
@@ -41,6 +43,7 @@ public class RobotContainer extends Robot {
     LinearSlideSubsystem m_linearSlideSubsystem;
     CassetSubsystem m_cassetSubsystem;
      IntakeSubsystem m_intakeSubsystem;
+     PlaneLauncherSubsystem m_planeLauncherSubsystem;
  //    PlaneLauncherSubsystem m_planeLauncherSubsystem;
 
 
@@ -68,8 +71,10 @@ public class RobotContainer extends Robot {
 
         m_poseEstimationSS.reset(0,0);
 
-        m_cassetSubsystem = new CassetSubsystem(m_hardwareMap, m_telemetry,0.0);
+        m_cassetSubsystem = new CassetSubsystem(m_hardwareMap, m_telemetry,0.97);
+        m_planeLauncherSubsystem = new PlaneLauncherSubsystem(m_hardwareMap, m_telemetry, 0);
         m_linearSlideSubsystem = new LinearSlideSubsystem(m_hardwareMap,m_telemetry);
+        m_linearSlideSubsystem.reset();
           m_intakeSubsystem = new IntakeSubsystem(m_hardwareMap, m_telemetry);
 
         switch(opModetype) {
@@ -125,28 +130,54 @@ public class RobotContainer extends Robot {
                 Constants.FIELD_CENTRIC_ENABLED));
 
         //Gamepad Button (Trigger) mappings
-//        m_gamePad1.getGamepadButton(GamepadKeys.Button.Y)
-//                .whenPressed(new MoveCommand(0.30159289474,0,0.7, m_driveSS));
 //
 //        m_gamePad1.getGamepadButton(GamepadKeys.Button.Y)
-//                .whileHeld(new InstantCommand(() -> {m_intakeSubsystem.intake(Constants.DEFAULT_INTAKE_SPEED);}));
+//                .whileHeld(new InstantCommand(() -> {m_int
+//                akeSubsystem.intake(Constants.DEFAULT_INTAKE_SPEED);}));
 
         m_gamePad2.getGamepadButton(GamepadKeys.Button.A)
-                .whenPressed(new InstantCommand(() -> {m_cassetSubsystem.depositPosition();}));
+                .whenPressed(
+                        new InstantCommand(() -> {m_cassetSubsystem.depositPosition();})
+                );
+
 
         m_gamePad2.getGamepadButton(GamepadKeys.Button.B)
                 .whenPressed(new InstantCommand(() -> {m_cassetSubsystem.intakePosition();}));
 
-        m_gamePad1.getGamepadButton(GamepadKeys.Button.X)
+        m_gamePad2.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+                .whenPressed(new InstantCommand(() -> {m_planeLauncherSubsystem.shoot();}));
+
+
+        m_gamePad2.getGamepadButton(GamepadKeys.Button.X)
                         .whileHeld(new InstantCommand(() -> {m_intakeSubsystem.intake(1.0);}))
                         .whenReleased(new InstantCommand(()-> {m_intakeSubsystem.stop();}));
 
+        m_gamePad2.getGamepadButton(GamepadKeys.Button.Y)
+                .whileHeld(new InstantCommand(() -> {m_intakeSubsystem.outake();}))
+                .whenReleased(new InstantCommand(()-> {m_intakeSubsystem.stop();}));
 
-        m_gamePad1.getGamepadButton(GamepadKeys.Button.DPAD_UP)
+
+        m_gamePad2.getGamepadButton(GamepadKeys.Button.DPAD_UP)
                 .whenPressed(new InstantCommand(() -> {m_linearSlideSubsystem.setLevel("HIGH");}));
 //
-        m_gamePad1.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
+//
+        m_gamePad2.getGamepadButton(GamepadKeys.Button.DPAD_UP)
                 .whenPressed(new InstantCommand(() -> {m_linearSlideSubsystem.setLevel("LOW");}));
+
+        m_gamePad2.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+                .whenPressed(new InstantCommand(() -> {m_linearSlideSubsystem.setLevel("MEDIUM");}));
+
+        m_gamePad1.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+                .whenPressed(new InstantCommand(() -> {m_linearSlideSubsystem.extendToZero();}));
+//
+//
+        m_gamePad1.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+                .whenPressed(new InstantCommand(() -> {m_linearSlideSubsystem.extendToTarget();}));
+
+        m_gamePad1.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+                .whenPressed(m_poseEstimationSS.resetHeadingCommand());
+
+
 //
 //        m_gamePad1.getGamepadButton(GamepadKeys.Button.X)
 //                .whenPressed(new MoveCommand(0,0.30159289474,0.7, m_driveSS));

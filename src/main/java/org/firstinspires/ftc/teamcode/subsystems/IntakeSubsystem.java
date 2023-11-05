@@ -4,6 +4,7 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.sun.source.doctree.StartElementTree;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -22,7 +23,9 @@ public class IntakeSubsystem extends SubsystemBase {
         m_telemetry = telemetry;
         flyWheel = m_hardwareMap.get(DcMotorEx.class, "flyWheel");
         flyWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+        MotorConfigurationType motorConfigurationType = flyWheel.getMotorType();
+        motorConfigurationType.setAchieveableMaxRPMFraction(0.99);
+        motorConfigurationType.setMaxRPM(6000);
     }
     public void stop(){
         flyWheel.setPower(0);
@@ -35,7 +38,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     }
     public void outake(){
-        flyWheel.setPower(-1.0);
+        flyWheel.setPower(-0.7);
 
 
     }

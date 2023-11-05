@@ -14,6 +14,7 @@ public class DriveCommand extends CommandBase {
     private final DoubleSupplier m_rightTriggerSupplier;
     private final PoseEstimationSubsystem m_poseEstimationSubsystem;
     private boolean m_isFieldCentric;
+    public static double m_offset = 0;
 
     public DriveCommand(DriveSubsystem drive,
                         PoseEstimationSubsystem poseEstimationSubsystem,
@@ -30,6 +31,7 @@ public class DriveCommand extends CommandBase {
         m_rightXSupplier = rightXSupplier;
         m_rightTriggerSupplier = rightTriggerSupplier;
         m_isFieldCentric = isFieldCentric;
+
 
         addRequirements(m_driveSubsystem);
         addRequirements(m_poseEstimationSubsystem);

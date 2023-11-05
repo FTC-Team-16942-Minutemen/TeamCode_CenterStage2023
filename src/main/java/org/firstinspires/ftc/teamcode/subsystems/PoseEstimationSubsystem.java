@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.arcrobotics.ftclib.command.Command;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
@@ -51,8 +53,10 @@ public class PoseEstimationSubsystem extends SubsystemBase {
         m_telemetry = telemetry;
         m_imu = m_hardwareMap.get(IMU.class, "imu");
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD);
+                RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+
+                RevHubOrientationOnRobot.UsbFacingDirection.DOWN
+                );
         m_imu.initialize(new IMU.Parameters(orientationOnRobot));
 
 
@@ -113,6 +117,12 @@ public class PoseEstimationSubsystem extends SubsystemBase {
 
     public double getHeadingAsDouble(Pose2d positionEstimation){
         return positionEstimation.getHeading();
+    }
+    public void resetHeading(){m_imu.resetYaw();}
+
+    public Command resetHeadingCommand(){
+        return new InstantCommand(() -> {resetHeading();});
+
     }
 
     public Pose2d getPose()

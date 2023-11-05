@@ -16,8 +16,8 @@ public final class Constants
 
 
     //LINEAR SLIDE LEVELS
-    public static int LOW = 0;
-    public static int MEDIUM = 300;
+    public static int LOW = 1500;
+    public static int MEDIUM = 2100;
     public static int HIGH = 2700;
 
     public static double DEFAULT_INTAKE_SPEED = 0.9;

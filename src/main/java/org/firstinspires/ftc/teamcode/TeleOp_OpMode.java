@@ -60,5 +60,6 @@ public class TeleOp_OpMode extends LinearOpMode {
             
             m_robot.run();
         }
+        m_robot.reset();
     }
 }

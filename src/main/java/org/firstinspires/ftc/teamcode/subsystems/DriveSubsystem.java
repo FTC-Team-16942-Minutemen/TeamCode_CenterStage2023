@@ -104,7 +104,7 @@ public class DriveSubsystem extends SubsystemBase {
         }
     }
 
-    public void drive(double leftX, double leftY, double rightX, double currentHeading, double throttle)
+    public void drive(double leftX, double leftY, double rightX, double throttle, double currentHeading)
     {
         double throttleSlope = 1 - Constants.THROTTLEMINLEVEL;
         double throttleScale = throttleSlope * throttle + Constants.THROTTLEMINLEVEL;

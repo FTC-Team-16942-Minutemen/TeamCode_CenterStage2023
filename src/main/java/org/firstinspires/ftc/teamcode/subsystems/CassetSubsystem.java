@@ -13,7 +13,6 @@ public class CassetSubsystem extends SubsystemBase {
     Servo m_cassetServo;
     double m_position;
 
-
     public static double minScale = 0.3;
     public static double maxScale = 0.97;
 
@@ -23,15 +22,17 @@ public class CassetSubsystem extends SubsystemBase {
         m_telemetry = telemetry;
         m_cassetServo = hardwareMap.get(Servo.class, "casset");
         m_position = initial_position;
+
+
     }
 
 
     public void depositPosition() {
-        m_position = 0.0;
+        m_position = minScale;
     }
 
     public void intakePosition() {
-        m_position = 1.0;
+        m_position = maxScale;
     }
 
     public void actuate()
@@ -41,9 +42,9 @@ public class CassetSubsystem extends SubsystemBase {
     public double getCassetPosition(){return m_position;}
     @Override
     public void periodic() {
-//        m_cassetServo.setPosition(m_position);
-//        m_cassetServo.scaleRange(minScale, maxScale);
-////
+        m_cassetServo.setPosition(m_position);
+        m_cassetServo.scaleRange(minScale, maxScale);
+//
 //        m_telemetry.addData("Servo Pos: ", m_cassetServo.getPosition());
 //        m_telemetry.addData("Set Position: ", m_position);
 //        m_telemetry.update();

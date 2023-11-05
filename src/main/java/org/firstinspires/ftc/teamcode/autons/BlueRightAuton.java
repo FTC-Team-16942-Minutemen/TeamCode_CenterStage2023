@@ -40,12 +40,13 @@ public class BlueRightAuton {
         m_cassetSubsystem = cassetSubsystem;
         m_intakeSubsystem = intakeSubsystem;
     }
-
+    //visionSubsystem.
     public Command generate()
     {
            return new SequentialCommandGroup(
-                   new WaitCommand(10250),
-                   new MoveCommand(m_driveSS, m_poseEstimationSS, 2,0,0)
+                   new WaitCommand(10)
+                   .andThen(m_poseEstimationSS.resetHeadingCommand()),
+                   new WaitCommand(10)
                 //write your auton here as a huge command sequential command group (i.e. series of commands)
            );
     }

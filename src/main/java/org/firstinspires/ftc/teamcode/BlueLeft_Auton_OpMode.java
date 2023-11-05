@@ -59,6 +59,7 @@ public class BlueLeft_Auton_OpMode extends LinearOpMode {
         {
             m_robot.run();
         }
+        m_robot.reset();
 
     }
 }
