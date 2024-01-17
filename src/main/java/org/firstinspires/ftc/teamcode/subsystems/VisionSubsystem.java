@@ -3,34 +3,73 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.geometry.Pose2d;
+
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.subsystems.visionpipelines.BlueDetectPipeline;
-import org.firstinspires.ftc.teamcode.subsystems.visionpipelines.RedDetectPipeline;
+
+import org.firstinspires.ftc.teamcode.subsystems.VisionPipelines.RedDetectPipeline;
+
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.robotContainer.Constants;
+import org.firstinspires.ftc.teamcode.subsystems.VisionPipelines.AprilTagDetectionPipeline;
+import org.firstinspires.ftc.teamcode.subsystems.VisionPipelines.BlueDetectPipeline;
+import org.firstinspires.ftc.teamcode.subsystems.VisionPipelines.RedDetectPipeline;
+
+
+import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
+import org.openftc.apriltag.AprilTagDetection;
+
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
+
+
+import java.util.ArrayList;
+
 
 public class VisionSubsystem extends SubsystemBase {
 
     HardwareMap m_hardwareMap;
     Telemetry m_telemetry;
     OpenCvWebcam m_webcam;
+
     RedDetectPipeline m_redImagePipeline;
+
+    BlueDetectPipeline m_blueImagePipeline;
+    //AprilTagDetectionPipeline m_aprilTagDetection;
+
     Boolean m_showStage = Boolean.TRUE;
     Pose2d deposit1;
     Pose2d deposit2;
     Pose2d deposit3;
-
+    public int pathNum = -1;
+    static final double FEET_PER_METER = 3.28084;
 
     public VisionSubsystem(HardwareMap hardwareMap, Telemetry telemetry)
     {
         m_hardwareMap = hardwareMap;
         m_telemetry = telemetry;
-        m_redImagePipeline = new RedDetectPipeline();
+        m_blueImagePipeline = new BlueDetectPipeline();
+
+    double fx = 578.272;
+    double fy = 578.272;
+    double cx = 402.145;
+    double cy = 221.506;
+    double tagsize = 0.166;
+    ArrayList<AprilTagDetection> detections;
+
+        m_hardwareMap = hardwareMap;
+        m_telemetry = telemetry;
+        m_blueImagePipeline = new BlueDetectPipeline();
+
 
         int cameraMonitorViewId = m_hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", m_hardwareMap.appContext.getPackageName());
         m_webcam = OpenCvCameraFactory.getInstance().createWebcam(m_hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -53,16 +92,11 @@ public class VisionSubsystem extends SubsystemBase {
         FtcDashboard.getInstance().startCameraStream(m_webcam, 30);
     }
 
-    @Override
-    public void periodic()
-
-    {
-        m_telemetry.addData("Location", getLocation());
-        if(m_showStage) {
-//            m_telemetry.addData("Location:", m_redImagePipeline.getLocation());
-            m_telemetry.update();
-        }
+    public int getLocation(){
+        return m_blueImagePipeline.getLocation();
     }
+
+
 
     public void disablePipeline()
     {
@@ -70,22 +104,35 @@ public class VisionSubsystem extends SubsystemBase {
         m_showStage = Boolean.FALSE;
     }
 
-    public Pose2d getLocation(){
 
-            if (m_redImagePipeline.getLocation() == 0)//magenta
-            {
-                return deposit1;
-            }
-            else if (m_redImagePipeline.getLocation() == 1) //green
-            {
-                return deposit2;            }
-            else if (m_redImagePipeline.getLocation() == 2) //cyan
-            {
-                return deposit3;            }
-            return deposit1;
+
+
+//    detection.ftcPose.range = Math.hypot(detection.ftcPose.x, detection.ftcPose.y);
+//    detection.ftcPose.bearing = outputUnitsAngle.fromUnit(AngleUnit.RADIANS, Math.atan2(-detection.ftcPose.x, detection.ftcPose.y));
+//    detection.ftcPose.elevation = outputUnitsAngle.fromUnit(AngleUnit.RADIANS, Math.atan2(detection.ftcPose.z, detection.ftcPose.y));
+
+
+
+    public void setMode(String mode) {
+
+        if (mode == "BLUE") {
+            m_blueImagePipeline.H_start = Constants.H_START_BLUE;
+            m_blueImagePipeline.H_end = Constants.H_END_BLUE;
+        } else if (mode == "RED") {
+            m_blueImagePipeline.H_start = Constants.H_START_RED;
+            m_blueImagePipeline.H_end = Constants.H_END_RED;
+
+        }
+    }
+
+    @Override
+    public void periodic() {
+        if(m_showStage) {
+            m_telemetry.addData("Detected Spot:", m_blueImagePipeline.getLocation());
+            m_telemetry.update();
+        }
     }
 
 
-
-
 }
+

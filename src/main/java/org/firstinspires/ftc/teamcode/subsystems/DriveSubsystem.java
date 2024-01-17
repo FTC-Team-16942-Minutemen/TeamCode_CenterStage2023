@@ -1,208 +1,211 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import com.acmerobotics.dashboard.config.Config;
+
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.localization.Localizer;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
+import com.acmerobotics.roadrunner.util.Angle;
+
+import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.InstantCommand;
+
+import com.arcrobotics.ftclib.command.Robot;
 import com.arcrobotics.ftclib.command.SubsystemBase;
-import com.arcrobotics.ftclib.geometry.Rotation2d;
-import com.arcrobotics.ftclib.geometry.Translation2d;
-import com.arcrobotics.ftclib.kinematics.wpilibkinematics.ChassisSpeeds;
-import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveWheelSpeeds;
+import com.arcrobotics.ftclib.util.Timing;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.ejml.dense.row.mult.VectorVectorMult_CDRM;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Constants;
-import org.firstinspires.ftc.teamcode.util.UnscaledMecanumDriveKinematics;
+import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
+import org.firstinspires.ftc.teamcode.commands.TrajectoryFollowerCommand;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.roadrunner.util.Encoder;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.Vector;
+import java.util.concurrent.TimeUnit;
 
 /**
+ * A subsystem that uses the {@link SampleMecanumDrive} class.
+ * This periodically calls {@link SampleMecanumDrive#update()} which runs the internal
  * state machine for the mecanum drive. All movement/following is async to fit the paradigm.
  */
-@Config
 public class DriveSubsystem extends SubsystemBase {
 
     HardwareMap m_hardwareMap;
     Telemetry m_telemetry;
-    UnscaledMecanumDriveKinematics m_normalizedMecanumDriveKinematics;
-    UnscaledMecanumDriveKinematics m_mecanumDriveKinematics;
-    DcMotorEx frontLeft, frontRight, rearLeft, rearRight;
-    public static double kp = 10.0;
-    private List<DcMotorEx> m_motorList;
+    SampleMecanumDrive m_drive;
+    double m_allianceHeadingOffset;
+    double THROTTLEMINLEVEL = 0.4;
+    boolean m_isPotentialFieldEn = false;
+    double extHeading;
+    Pose2d pose;
+    List<Double> wheelPositions;
+//    Timing.Timer m_timer;
+//    Long prev_time;
 
-    public DriveSubsystem(HardwareMap hardwareMap, Telemetry telemetry)
+
+    public DriveSubsystem(HardwareMap hardwareMap, Telemetry telemetry, Pose2d initialPose, double allianceHeadingOffset)
     {
         m_hardwareMap=hardwareMap;
         m_telemetry=telemetry;
-
-        //This kinematics object is used for unnormalized speed control (i.e. it takes into accounts the robot frame dimensions) for precise auton
-        m_mecanumDriveKinematics = new UnscaledMecanumDriveKinematics(
-                new Translation2d(Constants.WHEEL_BASE/2.0, Constants.TRACK_WIDTH/2.0),
-                new Translation2d(Constants.WHEEL_BASE/2.0 , -Constants.TRACK_WIDTH/2.0),
-                new Translation2d(-Constants.WHEEL_BASE/2.0, Constants.TRACK_WIDTH/2.0),
-                new Translation2d(-Constants.WHEEL_BASE/2.0, -Constants.TRACK_WIDTH/2.0));
-
-        //This kinematics object is used for normalized speed control (doesn't care about robot dimensions) for teleop
-        m_normalizedMecanumDriveKinematics = new UnscaledMecanumDriveKinematics(
-                new Translation2d(0.5, 0.5),
-                new Translation2d(0.5, -0.5),
-                new Translation2d(-0.5, 0.5),
-                new Translation2d(-0.5, -0.5)); // NOTE: these should not change
-
-        frontLeft = m_hardwareMap.get(DcMotorEx.class, "FL");
-        frontRight = m_hardwareMap.get(DcMotorEx.class, "FR");
-        rearLeft = m_hardwareMap.get(DcMotorEx.class, "BL");
-        rearRight = m_hardwareMap.get(DcMotorEx.class, "BR");
-
-        rearLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        m_motorList = Arrays.asList(frontLeft, frontRight, rearLeft, rearRight);
-
-        setInitialMotorConfiguration();
-        setMotorZeroBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE); //Auton Defaults
+        m_drive=new SampleMecanumDrive(m_hardwareMap, m_telemetry);
+        m_drive.setPoseEstimate(initialPose);
+        m_allianceHeadingOffset = allianceHeadingOffset;
+//        m_timer = new Timing.Timer(300, TimeUnit.MILLISECONDS);
+//        m_timer.start();
+//        prev_time = m_timer.elapsedTime();
     }
 
-    private void setInitialMotorConfiguration()
+    public void drive(double leftX, double leftY, double rightX, double throttle, boolean isFieldCentric)
     {
+        Pose2d poseEstimate = getPoseEstimate();
+        Vector2d input_vec = new Vector2d(leftY, leftX).rotated(
+                isFieldCentric ? -(poseEstimate.getHeading() - Math.toRadians(m_allianceHeadingOffset)) :0
+        );
 
-        for (DcMotorEx motor : m_motorList) {
-            MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
-            motorConfigurationType.setAchieveableMaxRPMFraction(Constants.MAX_ACHIEVABLE_RPM_FRACTION);
-            motorConfigurationType.setMaxRPM(Constants.MAX_RPM);
-            motorConfigurationType.setTicksPerRev(Constants.TICKS_PER_REV / Constants.GEAR_RATIO);
-            motor.setMotorType(motorConfigurationType);
+        Vector2d CorrectedInput = input_vec;
+
+
+        double throttleSlope = 1 - THROTTLEMINLEVEL;
+        double throttleScale = throttleSlope * throttle + THROTTLEMINLEVEL;
+        m_drive.setWeightedDrivePower(
+                new Pose2d(
+                        CorrectedInput.getX() * throttleScale,
+                        CorrectedInput.getY() * throttleScale,
+                        rightX * throttleScale
+                )
+        );
+    }
+
+
+    private Vector2d quadraticControlLaw(Vector2d inputVec)
+    {
+        double outX = inputVec.getX() * inputVec.getX();
+        double outY = inputVec.getY() * inputVec.getY();
+        return new Vector2d(outX, outY);
+    }
+
+    public void TogglePotentialFields()
+    {
+        m_isPotentialFieldEn = !m_isPotentialFieldEn;
+    }
+
+
+    public void moveRobot(double x, double y, double yaw) {
+        // Calculate wheel powers.
+        double leftFrontPower    =  x -y -yaw;
+        double rightFrontPower   =  x +y +yaw;
+        double leftBackPower     =  x +y -yaw;
+        double rightBackPower    =  x -y +yaw;
+
+        // Normalize wheel powers to be less than 1.0
+        double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+        max = Math.max(max, Math.abs(leftBackPower));
+        max = Math.max(max, Math.abs(rightBackPower));
+
+        if (max > 1.0) {
+            leftFrontPower /= max;
+            rightFrontPower /= max;
+            leftBackPower /= max;
+            rightBackPower /= max;
         }
+
+        // Send powers to the wheels.
+        m_drive.setMotorPowers(leftFrontPower, leftBackPower, rightBackPower, rightFrontPower);
     }
 
-    public void setPController(double p)
+
+
+
+    public void correctHeadingOffset()
     {
-        for (DcMotorEx motor : m_motorList)
-        {
-            motor.setPositionPIDFCoefficients(kp);
-        }
+        m_allianceHeadingOffset = Math.toDegrees(getPoseEstimate().getHeading());
     }
 
-    public void setMotorZeroBehavior(DcMotorEx.ZeroPowerBehavior zeroPowerBehavior)
+    public void update()
     {
-        for (DcMotorEx motor : m_motorList)
-        {
-            motor.setZeroPowerBehavior(zeroPowerBehavior);
-        }
+//        m_telemetry.addData("timestep: ", m_timer.elapsedTime() - prev_time);
+//        m_telemetry.update();
+        m_drive.update();
+//        prev_time = m_timer.elapsedTime();
     }
 
-    public void setMotorMode(DcMotorEx.RunMode runMode)
+
+
+
+
+    public boolean isBusy() {
+        return m_drive.isBusy();
+    }
+
+    public void stop(){
+        drive(0,0,0, 0, true);
+    }
+
+
+    public Command stopCommand(){return new InstantCommand(()-> this.stop());
+    }
+
+
+    public void followTrajectory(Trajectory trajectory){
+        m_drive.followTrajectory(trajectory);
+    }
+
+    public void followTrajectoryAsync(Trajectory trajectory) { m_drive.followTrajectoryAsync(trajectory);}
+
+    public void turnAsync(double angle) {m_drive.turnAsync(angle);}
+
+    public void setPoseEstimate(Pose2d pose)
     {
-        for (DcMotorEx motor : m_motorList)
-        {
-            motor.setMode(runMode);
-        }
+        m_drive.setPoseEstimate(pose);
     }
 
-    public void drive(double leftX, double leftY, double rightX, double throttle, double currentHeading)
+    public Pose2d getPoseEstimate()
     {
-        double throttleSlope = 1 - Constants.THROTTLEMINLEVEL;
-        double throttleScale = throttleSlope * throttle + Constants.THROTTLEMINLEVEL;
-
-        MecanumDriveWheelSpeeds wheelSpeeds = m_normalizedMecanumDriveKinematics.toWheelSpeeds(
-                ChassisSpeeds.fromFieldRelativeSpeeds(
-                        leftY * throttleScale,
-                        leftX * throttleScale,
-                        rightX * throttleScale,
-                        new Rotation2d(currentHeading)));
-        wheelSpeeds.normalize(1.0);
-        setMotorPowers(wheelSpeeds);
+        return m_drive.getPoseEstimate();
     }
-    public void drive(double leftX, double leftY, double rightX, double currentHeading)
+
+
+    public void updatePoseEstimate()
     {
-
-
-        MecanumDriveWheelSpeeds wheelSpeeds = m_normalizedMecanumDriveKinematics.toWheelSpeeds(
-                ChassisSpeeds.fromFieldRelativeSpeeds(
-                        leftY,
-                        leftX ,
-                        rightX,
-                        new Rotation2d(currentHeading)));
-        wheelSpeeds.normalize(1.0);
-        setMotorPowers(wheelSpeeds);
+        m_drive.updatePoseEstimate();
     }
 
-
-    private void setMotorPowers(MecanumDriveWheelSpeeds wheelSpeeds)
-    {
-        frontLeft.setPower(wheelSpeeds.frontLeftMetersPerSecond);
-        frontRight.setPower(wheelSpeeds.frontRightMetersPerSecond);
-        rearLeft.setPower(wheelSpeeds.rearLeftMetersPerSecond);
-        rearRight.setPower(wheelSpeeds.rearRightMetersPerSecond);
-    }
-
-    public void setMotorPowers(double power)
-    {
-        frontLeft.setPower(power);
-        frontRight.setPower(power);
-        rearLeft.setPower(power);
-        rearRight.setPower(power);
-    }
-
-    public void setMovement(Translation2d inputDisp, double angleDispDegrees)
-    {
-        //We use the kinematics model to convert desired chassis displacements (in m)
-        //over to desired wheel displacements (also in m)
-        MecanumDriveWheelSpeeds wheelDisp =
-                m_normalizedMecanumDriveKinematics.toWheelSpeeds(
-                        new ChassisSpeeds(inputDisp.getX(),
-                                inputDisp.getY(),
-                                angleDispDegrees * Math.PI/180.0));
-
-        //Convert the linear displacements to angular displacements (in units of rotations)
-        double frontLeftAngDisp = wheelDisp.frontLeftMetersPerSecond / Constants.WHEEL_RADIUS / (2.0 * Math.PI);
-        double frontRightAngDisp = wheelDisp.frontRightMetersPerSecond / Constants.WHEEL_RADIUS / (2.0 * Math.PI);
-        double rearLeftAngDisp = wheelDisp.rearLeftMetersPerSecond / Constants.WHEEL_RADIUS / (2.0 * Math.PI);
-        double rearRightAngDisp = wheelDisp.rearRightMetersPerSecond / Constants.WHEEL_RADIUS / (2.0 * Math.PI);
-
-        //Convert wheel rotations to wheel encoder Ticks
-        int frontLeftTicks = (int)(frontLeftAngDisp * Constants.TICKS_PER_REV);
-        int frontRightTicks = (int)(frontRightAngDisp * Constants.TICKS_PER_REV);
-        int rearLeftTicks = (int)(rearLeftAngDisp * Constants.TICKS_PER_REV);
-        int rearRightTicks = (int)(rearRightAngDisp * Constants.TICKS_PER_REV);
-
-        //Apply the computed encoder tick rotations to the wheel position PID controller
-        setMotorMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        setMotorMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontLeft.setTargetPosition(frontLeftTicks);
-        frontRight.setTargetPosition(frontRightTicks);
-        rearLeft.setTargetPosition(rearLeftTicks);
-        rearRight.setTargetPosition(rearRightTicks);
-        setMotorMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-    }
-
-    public boolean isBusy()
-    {
-        return (frontLeft.isBusy() && frontRight.isBusy() && rearLeft.isBusy() && rearRight.isBusy());
-    }
-
-//    private Vector2d quadraticControlLaw(Vector2d inputVec) //TODO: use this only if the controls are too sensitive
-//    {
-//        double outX = inputVec.getX() * inputVec.getX();
-//        double outY = inputVec.getY() * inputVec.getY();
-//        return new Vector2d(outX, outY);
+//    public void IMUCorrectedHeading(){
+//        pose = getPoseEstimate();
+//        extHeading = Angle.norm(m_drive.getExternalHeading()- pose.getHeading());
+//        pose = new Pose2d(getPoseEstimate().vec(), extHeading);
+//        setPoseEstimate(pose);
 //    }
 
+    public TrajectoryFollowerCommand runTrajectory(String trajectory){return new TrajectoryFollowerCommand(this, trajectory);}
+
+
+    public TrajectoryFollowerCommand runTrajectory(String trajectory, double speed, double acc){return new TrajectoryFollowerCommand(this, trajectory, speed, acc);}
     @Override
-    public void periodic()
-    {
-        setPController(kp);
-//        m_telemetry.addData("P controller", kp);
-//        m_telemetry.addData("LF Encoder", frontLeft.getCurrentPosition());
-//        m_telemetry.addData("LR Encoder", frontRight.getCurrentPosition());
-//        m_telemetry.addData("RF Encoder", rearLeft.getCurrentPosition());
-//        m_telemetry.addData("RR Encoder", rearRight.getCurrentPosition());
-//
+    public void periodic() {
+        m_telemetry.addData("robotPosePoseEstimate", getPoseEstimate());
+        //m_telemetry.update();
+
+        m_drive.updatePoseEstimate();
+
+        //    update();
+//        IMUCorrectedHeading();
+//        m_telemetry.addData("Real Heading", m_drive.getRawExternalHeading());
+//        m_telemetry.update();
+//        wheelPositions = m_drive.getWheelPositions();
+//        m_telemetry.addData("0: ", wheelPositions.get(0));
+//        m_telemetry.addData("1: ", wheelPositions.get(1));
+//        m_telemetry.addData("2: ", wheelPositions.get(2));
+//        m_telemetry.addData("3: ", wheelPositions.get(3));
+////        m_telemetry.addData("Potential Fields Enabled: ", m_isPotentialFieldEn);
 //        m_telemetry.update();
     }
 

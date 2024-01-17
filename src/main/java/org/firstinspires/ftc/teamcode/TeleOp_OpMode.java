@@ -29,8 +29,14 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.arcrobotics.ftclib.command.Robot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.teamcode.robotContainer.Constants;
+import org.firstinspires.ftc.teamcode.robotContainer.RobotContainer;
 
 /*
 TeleOp OpMode script using Command-based Robot
@@ -43,23 +49,52 @@ public class TeleOp_OpMode extends LinearOpMode {
     @Override
     public void runOpMode() {
 
+        //Robot initial pose
+        Pose2d initialPose = PoseStorage.currentPose;
+        double allianceHeadingOffset = PoseStorage.allianceHeadingOffset;
+
         //Instantiate the robot
         RobotContainer m_robot = new RobotContainer(
                 Constants.OpModeType.TELEOP,
                 hardwareMap,
                 telemetry,
                 gamepad1,
-                gamepad2);
+                gamepad2,
+                initialPose,
+                allianceHeadingOffset);
 
         //Wait for driver to press PLAY and then STOP
         waitForStart();
 
+<<<<<<< Updated upstream
+        //Disable the parking detection pipeline and start the parking timer countdown
+        m_robot.disableVision();
+
         // Run the robot until the end of the match (or until the driver presses STOP)
         while (opModeIsActive() && !isStopRequested())
         {
-            
             m_robot.run();
         }
+
+        //Reset the PoseStorage in case we have to start over
+=======
+        //Switches from color pipeline to april tag detection
+      //  m_robot.switchToApril();
+
+        // Run the robot until the end of the match (or until the driver presses STOP)
+        if(opModeIsActive()) {
+            while (opModeIsActive() && !isStopRequested()) {
+                m_robot.run();
+
+            }
+            m_robot.disableVision();
+        }
+
+
+        //Reset the PoseStorage in case we have to start over
+
+>>>>>>> Stashed changes
+        PoseStorage.currentPose = new Pose2d(new Vector2d( 0.0, 0.0), 0.0);
         m_robot.reset();
     }
 }
