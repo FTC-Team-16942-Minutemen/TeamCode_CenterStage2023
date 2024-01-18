@@ -1,10 +1,7 @@
 package org.firstinspires.ftc.teamcode.Autons;
 
 import com.arcrobotics.ftclib.command.Command;
-<<<<<<< Updated upstream
-=======
 import com.arcrobotics.ftclib.command.ConditionalCommand;
->>>>>>> Stashed changes
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
@@ -43,25 +40,6 @@ public class RedLeftAuton {
     }
 
     public Command generate() {
-<<<<<<< Updated upstream
-        int pathNum = m_vision.getLocation();
-        return new WaitCommand(0)
-                .andThen(m_driveSS.runTrajectory("RedRight/BRGround" + pathNum))
-                .andThen(m_intake.outakeCommand())
-                .andThen(new WaitCommand(1000))
-                .andThen(m_intake.stopCommand())
-                .andThen(m_driveSS.runTrajectory("RedRight/BRDeposit" + pathNum))
-                .andThen(m_linearSlideSubsystem.setAndExtendCommand("LOWLOW"))
-                .andThen(new WaitCommand(1000))
-                .andThen(m_casset.depositBothCommand())
-                .andThen(new WaitCommand(1000))
-                .andThen(new ParallelCommandGroup( m_driveSS.runTrajectory("RedRight/RRParkLeft"),
-                        new SequentialCommandGroup(new WaitCommand(500), m_linearSlideSubsystem.setAndExtendCommand("ZERO")
-                        )));
-
-
-        //.andThen(new RotateCommand(45,0.2, m_driveSS));
-=======
 
 
         return new WaitCommand(0)
@@ -166,6 +144,5 @@ public class RedLeftAuton {
                                 m_linearSlideSubsystem.setAndExtendCommand("ZERO"),
                                 m_casset.intakePoseCommand())));
 
->>>>>>> Stashed changes
     }
 }

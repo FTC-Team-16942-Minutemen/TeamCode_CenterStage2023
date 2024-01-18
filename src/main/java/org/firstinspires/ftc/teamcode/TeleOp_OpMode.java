@@ -66,18 +66,6 @@ public class TeleOp_OpMode extends LinearOpMode {
         //Wait for driver to press PLAY and then STOP
         waitForStart();
 
-<<<<<<< Updated upstream
-        //Disable the parking detection pipeline and start the parking timer countdown
-        m_robot.disableVision();
-
-        // Run the robot until the end of the match (or until the driver presses STOP)
-        while (opModeIsActive() && !isStopRequested())
-        {
-            m_robot.run();
-        }
-
-        //Reset the PoseStorage in case we have to start over
-=======
         //Switches from color pipeline to april tag detection
       //  m_robot.switchToApril();
 
@@ -93,7 +81,6 @@ public class TeleOp_OpMode extends LinearOpMode {
 
         //Reset the PoseStorage in case we have to start over
 
->>>>>>> Stashed changes
         PoseStorage.currentPose = new Pose2d(new Vector2d( 0.0, 0.0), 0.0);
         m_robot.reset();
     }

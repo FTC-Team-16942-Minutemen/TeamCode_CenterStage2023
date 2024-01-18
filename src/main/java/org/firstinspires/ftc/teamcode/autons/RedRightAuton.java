@@ -1,24 +1,16 @@
 package org.firstinspires.ftc.teamcode.Autons;
 
 import com.arcrobotics.ftclib.command.Command;
-<<<<<<< Updated upstream
-=======
 import com.arcrobotics.ftclib.command.ConditionalCommand;
->>>>>>> Stashed changes
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Line;
-<<<<<<< Updated upstream
-import org.firstinspires.ftc.teamcode.commands.GroundDepositCommand;
-import org.firstinspires.ftc.teamcode.commands.TrajectoryFollowerCommand;
-=======
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.commands.GroundDepositCommand;
 import org.firstinspires.ftc.teamcode.commands.TrajectoryFollowerCommand;
 import org.firstinspires.ftc.teamcode.subsystems.AprilVision2;
->>>>>>> Stashed changes
 import org.firstinspires.ftc.teamcode.subsystems.CassetSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DoubleCassetSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
@@ -34,21 +26,14 @@ public class RedRightAuton {
     IntakeSubsystem m_intake;
     LinearSlideSubsystem m_linearSlideSubsystem;
     VisionSubsystem m_vision;
-<<<<<<< Updated upstream
-=======
     Telemetry m_telemetry;
->>>>>>> Stashed changes
 
     public RedRightAuton(DriveSubsystem driveSubsystem,
                           DoubleCassetSubsystem cassetSubsystem,
                           IntakeSubsystem intakeSubsystem,
                           LinearSlideSubsystem linearSlideSubsystem,
-<<<<<<< Updated upstream
-                          VisionSubsystem visionSubsystem
-=======
                          VisionSubsystem visionSubsystem,
                          Telemetry telemetry
->>>>>>> Stashed changes
     )
     {
         m_driveSS = driveSubsystem;
@@ -56,29 +41,6 @@ public class RedRightAuton {
         m_intake = intakeSubsystem;
         m_linearSlideSubsystem = linearSlideSubsystem;
         m_vision = visionSubsystem;
-<<<<<<< Updated upstream
-    }
-
-    public Command generate() {
-        int pathNum = m_vision.pathNum;
-        return new WaitCommand(0)
-
-                .andThen(m_driveSS.runTrajectory("RedRight/RRGround" + pathNum))
-                .andThen(m_intake.outakeCommand())
-                .andThen(new WaitCommand(1000))
-                .andThen(m_intake.stopCommand())
-                .andThen(m_driveSS.runTrajectory("RedRight/RRDeposit" + pathNum))
-                .andThen(m_linearSlideSubsystem.setAndExtendCommand("LOWLOW"))
-                .andThen(new WaitCommand(1000))
-                .andThen(m_casset.depositBothCommand())
-                .andThen(new WaitCommand(1000))
-                .andThen(new ParallelCommandGroup( m_driveSS.runTrajectory("RedRight/RRParkLeft"),
-                        new SequentialCommandGroup(new WaitCommand(500), m_linearSlideSubsystem.setAndExtendCommand("ZERO")
-                                )));
-
-
-        //.andThen(new RotateCommand(45,0.2, m_driveSS));
-=======
         m_telemetry = telemetry;
     }
 
@@ -169,6 +131,5 @@ public class RedRightAuton {
                         m_casset.intakePoseCommand())));
 
 
->>>>>>> Stashed changes
     }
 }

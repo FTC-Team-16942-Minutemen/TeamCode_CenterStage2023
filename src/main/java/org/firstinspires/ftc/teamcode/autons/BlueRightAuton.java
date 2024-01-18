@@ -1,10 +1,7 @@
 package org.firstinspires.ftc.teamcode.Autons;
 
 import com.arcrobotics.ftclib.command.Command;
-<<<<<<< Updated upstream
-=======
 import com.arcrobotics.ftclib.command.ConditionalCommand;
->>>>>>> Stashed changes
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
@@ -12,10 +9,7 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import org.apache.commons.math3.geometry.euclidean.twod.Line;
 import org.firstinspires.ftc.teamcode.commands.GroundDepositCommand;
 import org.firstinspires.ftc.teamcode.commands.TrajectoryFollowerCommand;
-<<<<<<< Updated upstream
-=======
 import org.firstinspires.ftc.teamcode.subsystems.AprilVision2;
->>>>>>> Stashed changes
 import org.firstinspires.ftc.teamcode.subsystems.CassetSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DoubleCassetSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;

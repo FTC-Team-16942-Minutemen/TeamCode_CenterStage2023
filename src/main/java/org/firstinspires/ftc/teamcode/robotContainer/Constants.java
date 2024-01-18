@@ -1,11 +1,8 @@
 package org.firstinspires.ftc.teamcode.robotContainer;
 
-<<<<<<< Updated upstream
-=======
 import com.acmerobotics.dashboard.config.Config;
 
 @Config
->>>>>>> Stashed changes
 public final class Constants
 {
     // enum to specify opMode type
@@ -17,12 +14,6 @@ public final class Constants
         RED_LEFT_AUTO
     }
 
-<<<<<<< Updated upstream
-    public static int LOW = 1200;
-    public static int MEDIUM = 1500;
-    public static int HIGH = 2400;
-    public static int LOWLOW = 900;
-=======
     public static double H_START_BLUE = 90;
     public static double H_END_BLUE = 105;
 
@@ -46,7 +37,6 @@ public final class Constants
     public static double MIDDLE_SCORE_POSITION_X = -0.02;
     public static double MIDDLE_SCORE_POSITION_Y = 0.04;
     public static double MIDDLE_SCORE_POSITION_0 = -1;
->>>>>>> Stashed changes
 
     public static double DEFAULT_INTAKE_SPEED = 1.0;
 

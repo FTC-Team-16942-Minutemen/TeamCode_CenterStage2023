@@ -1,12 +1,5 @@
 package org.firstinspires.ftc.teamcode.commands;
 
-<<<<<<< Updated upstream
-import com.arcrobotics.ftclib.command.CommandBase;
-
-public class AlignmentScoringCommand extends CommandBase {
-
-}
-=======
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 
 import com.arcrobotics.ftclib.command.CommandBase;
@@ -128,4 +121,3 @@ public class AlignmentScoringCommand extends CommandBase {
     }
 }
 
->>>>>>> Stashed changes
