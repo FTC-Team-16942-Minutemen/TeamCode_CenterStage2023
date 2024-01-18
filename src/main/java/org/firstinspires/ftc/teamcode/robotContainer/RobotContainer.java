@@ -33,7 +33,7 @@ import org.firstinspires.ftc.teamcode.commands.TrajectoryFollowerCommand;
 import org.firstinspires.ftc.teamcode.commands.TurnCommand;
 
 
-import org.firstinspires.ftc.teamcode.Autons.BlueRightAuton;
+import org.firstinspires.ftc.teamcode.autons.BlueRightAuton;
 import org.firstinspires.ftc.teamcode.Autons.RedLeftAuton;
 import org.firstinspires.ftc.teamcode.Autons.RedRightAuton;
 import org.firstinspires.ftc.teamcode.commands.AlignmentScoringCommand;
@@ -232,17 +232,6 @@ public class RobotContainer extends Robot {
                     true));
 
 
-            m_gamePad2.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-                    .whenPressed(new InstantCommand(() -> {
-                        m_planeLauncherSubsystem.shoot();
-                    }));
-
-
-            m_gamePad2.getGamepadButton(GamepadKeys.Button.X)
-                    .whileHeld(m_intakeSubsystem.intakeCommand(1.0))
-                    .whenReleased(new InstantCommand(() -> {
-                        m_intakeSubsystem.stop();
-                    }));
 
             m_gamePad2.getGamepadButton(GamepadKeys.Button.Y)
                     .whileHeld(new InstantCommand(() -> {
@@ -397,4 +386,3 @@ public class RobotContainer extends Robot {
 
 
     }
-}

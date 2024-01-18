@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Autons;
+package org.firstinspires.ftc.teamcode.autons;
 
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.ConditionalCommand;
@@ -42,22 +42,6 @@ public class BlueRightAuton {
 
     public Command generate()
     {
-
-        int pathNum = m_vision.getLocation();
-        return new WaitCommand(0)
-                .andThen(m_driveSS.runTrajectory("BlueLeft/BRGround" + pathNum))
-                .andThen(m_intake.outakeCommand())
-                .andThen(new WaitCommand(1000))
-                .andThen(m_intake.stopCommand())
-                .andThen(m_driveSS.runTrajectory("BlueLeft/BRDeposit" + pathNum))
-                .andThen(m_linearSlideSubsystem.setAndExtendCommand("LOWLOW"))
-                .andThen(new WaitCommand(1000))
-                .andThen(m_casset.depositBothCommand())
-                .andThen(new WaitCommand(1000))
-                .andThen(new ParallelCommandGroup( m_driveSS.runTrajectory("BlueLeft/BRParkLeft"),
-                        new SequentialCommandGroup(new WaitCommand(500), m_linearSlideSubsystem.setAndExtendCommand("ZERO")
-                        )));
-
         return new WaitCommand(0)
                 .andThen(m_intake.stateChangeCommand())
                 .andThen(new ConditionalCommand(

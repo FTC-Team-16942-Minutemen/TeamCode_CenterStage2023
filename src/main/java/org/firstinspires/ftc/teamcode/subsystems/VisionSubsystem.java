@@ -73,7 +73,7 @@ public class VisionSubsystem extends SubsystemBase {
 
         int cameraMonitorViewId = m_hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", m_hardwareMap.appContext.getPackageName());
         m_webcam = OpenCvCameraFactory.getInstance().createWebcam(m_hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        m_webcam.setPipeline(m_redImagePipeline);
+        m_webcam.setPipeline(m_blueImagePipeline);
         m_webcam.setMillisecondsPermissionTimeout(2500);
         m_webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
                                            @Override
