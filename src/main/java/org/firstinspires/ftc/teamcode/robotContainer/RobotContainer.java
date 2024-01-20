@@ -77,11 +77,9 @@ public class RobotContainer extends Robot {
     //Subsystems
     DriveSubsystem m_driveTrain;
     LinearSlideSubsystem m_linearSlideSubsystem;
-
     VisionSubsystem m_visionSubsystem;
     //  CassetSubsystem m_cassetSubsystem;
 
-    VisionSubsystem m_aprilVision;
     //  CassetSubsystem m_cassetSubsystem;
 
     DoubleCassetSubsystem m_cassetSubsystem;
@@ -116,9 +114,6 @@ public class RobotContainer extends Robot {
             //Initialize Subsystems
             m_driveTrain = new DriveSubsystem(m_hardwareMap, m_telemetry, initialPose, allianceHeadingOffset);
             m_linearSlideSubsystem = new LinearSlideSubsystem(m_hardwareMap, m_telemetry);
-            m_visionSubsystem = new VisionSubsystem(m_hardwareMap, m_telemetry);
-
-            //   m_visionSubsystem = new VisionSubsystem(m_hardwareMap, m_telemetry);
 
             m_cassetSubsystem = new DoubleCassetSubsystem(m_hardwareMap, m_telemetry);
             m_planeLauncherSubsystem = new PlaneLauncherSubsystem(m_hardwareMap, m_telemetry, 0);
@@ -130,7 +125,7 @@ public class RobotContainer extends Robot {
 
             m_rightTriggerTrigger2 = new RightTriggerTrigger(m_gamePad2, 0.05);
             m_leftTriggerTrigger2 = new LeftTriggerTrigger(m_gamePad2, 0.05);
-            m_aprilVision = new VisionSubsystem(m_hardwareMap, m_telemetry);
+            m_visionSubsystem = new VisionSubsystem(m_hardwareMap, m_telemetry);
             m_climber = new ClimberSubsystem(m_hardwareMap, m_telemetry);
             //
 
@@ -174,6 +169,7 @@ public class RobotContainer extends Robot {
             } else if (type == Constants.OpModeType.BLUE_RIGHT_AUTO) {
 
                 m_telemetry.addData("Initialize", "BlueRight_Auton");
+                m_telemetry.addData("Location", m_visionSubsystem.getLocation());
                 setupBlueRight_Auton();
             } else if (type == Constants.OpModeType.BLUE_LEFT_AUTO) {
                 m_telemetry.addData("Initialize", "BlueLeft_Auton");
@@ -276,12 +272,20 @@ public class RobotContainer extends Robot {
             m_gamePad2.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
                     .whenPressed(m_linearSlideSubsystem.changeLevelCommand("LOWLOW"));
 
+//            m_gamePad2.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)
+//                    .whenHeld(new SequentialCommandGroup(
+//                           new InstantCommand(()->m_linearSlideSubsystem.setState("adjust")),
+//                            new InstantCommand(()->   m_linearSlideSubsystem.adjustSlide(()-> m_gamePad2.getRightY()))
+//                    )).whenReleased(new InstantCommand(()-> m_linearSlideSubsystem.setState("setp")));
+
 
             m_gamePad1.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
                     .whenPressed(new InstantCommand(() -> {
                         m_linearSlideSubsystem.extendToZero();
-                    })
-                            .alongWith(m_cassetSubsystem.intakePoseCommand()));
+                    } ).alongWith(m_cassetSubsystem.intakePoseCommand())
+                            .alongWith(new InstantCommand(() -> {
+                                m_linearSlideSubsystem.extendToZero();
+                            })));
 //
 //
             m_gamePad1.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
@@ -289,12 +293,6 @@ public class RobotContainer extends Robot {
                         m_linearSlideSubsystem.extendToTarget();
                     }));
 
-
-            m_gamePad2.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)
-                    .whenPressed(m_climber.climb());
-
-            m_gamePad2.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON)
-                    .whenPressed(m_climber.retract());
 
 
             m_gamePad2.getGamepadButton(GamepadKeys.Button.A)
@@ -369,7 +367,7 @@ public class RobotContainer extends Robot {
         }
 
         private void setupBlueRight_Auton() {
-            BlueRightAuton blueRightAuton = new BlueRightAuton(m_driveTrain, m_cassetSubsystem, m_intakeSubsystem, m_linearSlideSubsystem, m_aprilVision);
+            BlueRightAuton blueRightAuton = new BlueRightAuton(m_driveTrain, m_cassetSubsystem, m_intakeSubsystem, m_linearSlideSubsystem, m_visionSubsystem);
             CommandScheduler.getInstance().schedule(blueRightAuton.generate());
         }
 

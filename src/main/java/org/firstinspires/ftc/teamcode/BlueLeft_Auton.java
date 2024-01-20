@@ -48,7 +48,7 @@ public class BlueLeft_Auton extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        Pose2d initialPose = new Pose2d(new Vector2d(18 , 62), Math.toRadians(270.0));
+        Pose2d initialPose = new Pose2d(new Vector2d(18 , 61.5), Math.toRadians(90.0));
 
        // Pose2d initialPose = new Pose2d(DistancelocalizerSubsystem.class.);
         //Instantiate the robot

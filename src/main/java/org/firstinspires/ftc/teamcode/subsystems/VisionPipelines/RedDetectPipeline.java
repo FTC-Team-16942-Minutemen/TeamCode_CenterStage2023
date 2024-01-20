@@ -16,7 +16,6 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
-@Config
 
 public class RedDetectPipeline implements VisionProcessor {
 

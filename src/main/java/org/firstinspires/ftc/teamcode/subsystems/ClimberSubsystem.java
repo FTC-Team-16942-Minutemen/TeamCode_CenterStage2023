@@ -25,8 +25,8 @@ public class ClimberSubsystem extends SubsystemBase {
     public static double k_p = 8.0;
     public static double p = 12.0;
     public static double i = 0.0;
-    public static double d = 1.0;
-    public static double f = 15.0;
+    public static double d = 0.0;
+    public static double f = 0.0;
 
     public static int zero = 0;
 

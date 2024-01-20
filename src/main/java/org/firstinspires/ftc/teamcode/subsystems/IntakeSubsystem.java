@@ -69,23 +69,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
             m_telemetry = telemetry;
             flyWheel = m_hardwareMap.get(DcMotorEx.class, "flyWheel");
 
-            flyWheelOutside = m_hardwareMap.get(DcMotorEx.class, "pe");
-
-            flyWheelOutside.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            flyWheelOutside.setDirection(DcMotorSimple.Direction.REVERSE);
-            MotorConfigurationType motorConfigurationType = flyWheelOutside.getMotorType();
-            motorConfigurationType.setAchieveableMaxRPMFraction(0.99);
-            motorConfigurationType.setMaxRPM(435);
-
-
-            //       flyWheelOutside = m_hardwareMap.get(DcMotorEx.class, "pe");
-
-//        flyWheelOutside.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        flyWheelOutside.setDirection(DcMotorSimple.Direction.REVERSE);
-//        MotorConfigurationType motorConfigurationType = flyWheelOutside.getMotorType();
-//        motorConfigurationType.setAchieveableMaxRPMFraction(0.99);
-//        motorConfigurationType.setMaxRPM(435);
-
             m_servo = m_hardwareMap.get(Servo.class, "FI");
 
 
@@ -98,19 +81,18 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
         public void stop() {
             flyWheel.setPower(0);
-            flyWheelOutside.setPower(0);
+
         }
 
 
         public void intake(double speed) {
             flyWheel.setPower(speed);
-            flyWheelOutside.setPower(speed);
 
         }
 
         public void outake() {
             flyWheel.setPower(-0.7);
-            flyWheelOutside.setPower(-0.7);
+
 
         }
 
@@ -126,7 +108,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
             double throttleSlope = 1 - THROTTLEMINLEVEL;
             double throttleScale = throttleSlope * intakeThrottle.getAsDouble() + THROTTLEMINLEVEL;
             flyWheel.setPower(1.0 * throttleScale);
-            // flyWheelOutside.setPower(speed);
 
         }
 

@@ -52,7 +52,10 @@ public class BlueDetectPipeline extends OpenCvPipeline {
     public static int textScale = 3;
     public static int textThickness = 12;
 
-    @Override
+
+            public static double object = 0.001;
+
+            @Override
     public Mat processFrame(Mat input)
     {
         /*
@@ -74,40 +77,44 @@ public class BlueDetectPipeline extends OpenCvPipeline {
         erosionKernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(kernelDimx,kernelDimy), new Point(-1,-1));
         Imgproc.erode(mask, erodedMask, erosionKernel);
         Imgproc.dilate(erodedMask, erodedMask, erosionKernel);
-
-        //This is the input copy image used where we draw the cropping boxes on it
         input.copyTo(input_withBoxes);
 
         //Draw three simple boxes around the middle of the image
         maxVal = 0.0;
-        for (int i=0; i<3; i++) {
+        // Initialize variables to store information about the boxes
+        maxIndex = -1;
+        float maxVal = -1.0f;
+        float objectAmount = (float) object;
+        for (int i = 0; i < 2; i++) {
+            // Draw rectangles on the input_withBoxes image
             Imgproc.rectangle(
                     input_withBoxes,
-                    new Point(
-                            (i+1) * input.cols() * (1f / 5f),
-                            input.rows() / 4),
-                    new Point(
-                            (i + 2) * input.cols() * (1f / 5f),
-                            input.rows() * (3f / 4f)),
+                    new Point(i * input.cols() / 2, 0),
+                    new Point((i + 1) * input.cols() / 2, input.rows() ),
                     new Scalar(0, 0, 255), 4);
 
+            // Extract submatrices from the erodedMask
             cropped = erodedMask.submat(
-                    new org.opencv.core.Range((int) (input.rows() / 4), (int) (input.rows() * (3f / 4f))),
-                    new org.opencv.core.Range((int)((i+1) * input.cols() * (1f / 5f)), (int) ((i+2)*input.cols() * (1f / 5f)))
+                    new org.opencv.core.Range(0, input.rows()),
+                    new org.opencv.core.Range(i * input.cols() / 2, (i + 1) * input.cols() / 2)
             );
 
-            //Sum all the color thresholded pixels to detect the color of interest
+            // Sum all the color thresholded pixels to detect the color of interest
             sumValue = Core.sumElems(cropped);
             totalPixs = (float) (cropped.cols() * cropped.rows());
-            sumValNorm[i] = (float) (sumValue.val[0]) / totalPixs / 255.0f; //I might have the scaling wrong
+            sumValNorm[i] = (float) (sumValue.val[0]) / totalPixs / 255.0f; // Check if scaling is correct
 
-            //Get the index of the box with the most color-thresholded pixels
-            if(sumValNorm[i] > maxVal)
-            {
+            // Get the index of the box with the most color-thresholded pixels
+            if (sumValNorm[i] > maxVal) {
                 maxVal = sumValNorm[i];
                 maxIndex = i;
             }
+
         }
+        if (maxVal < objectAmount) {
+            maxIndex = 2;
+        }
+
 
         //Write the detected position on the image
         Imgproc.putText(input_withBoxes, Integer.toString(maxIndex), new Point(textLocX,textLocY), Imgproc.FONT_HERSHEY_SIMPLEX, textScale, new Scalar(0,0,255), textThickness);

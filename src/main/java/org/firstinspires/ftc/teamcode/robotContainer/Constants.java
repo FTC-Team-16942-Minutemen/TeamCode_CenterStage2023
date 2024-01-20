@@ -21,7 +21,7 @@ public final class Constants
     public static double H_END_RED = 9;
 
     public static int LOW = 1200;
-    public static int MEDIUM = 1500;
+    public static int MEDIUM = 1300;
     public static int HIGH = 2000;
     public static int LOWLOW = 800;
     public static int AUTON = 1000;

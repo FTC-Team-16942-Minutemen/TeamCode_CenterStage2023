@@ -14,6 +14,9 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robotContainer.Constants;
+
+import java.util.function.DoubleSupplier;
+
 @Config
 public class LinearSlideSubsystem extends SubsystemBase {
     private HardwareMap hardwareMap;
@@ -31,7 +34,7 @@ public class LinearSlideSubsystem extends SubsystemBase {
 
     public static int zero = -15;
 
-
+    public String m_state;
 
 
     public LinearSlideSubsystem(HardwareMap hardwareMap,Telemetry telemetry){
@@ -98,6 +101,30 @@ public class LinearSlideSubsystem extends SubsystemBase {
         linearSlide.setPower(-0.4);
     }
 
+    public void adjustSlide(DoubleSupplier joystick){
+        linearSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        double power = joystick.getAsDouble();
+        double m_power = 0;
+        if(power > 0.7){
+            m_power = 0.02;
+        } else if(power < -0.7){
+            m_power = -0.02;
+        } else if(power < 0.7 && power > -0.7){
+            m_power = 0;
+        }
+        linearSlide.setPower(m_power);
+    }
+//    public void setState(String state){
+//        if(state == "setp"){
+//            m_state = "setp";
+//            linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//            targetPosition = linearSlide.getCurrentPosition();
+//        } else if(state == "adjust"){
+//            m_state = "adjust";
+//            linearSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        }
+//
+//    }
     public void resetEncoder(){
         linearSlide.setPower(0.0);
         targetPosition = 0;
@@ -122,10 +149,12 @@ public class LinearSlideSubsystem extends SubsystemBase {
 
     @Override
     public void periodic(){
+//        if(m_state == "setp") {
+            linearSlide.setTargetPosition(targetPosition);
 
-        linearSlide.setTargetPosition(targetPosition);
         linearSlide.setVelocityPIDFCoefficients(p, i, d, f);
         linearSlide.setPositionPIDFCoefficients(k_p);
+
 
     }
 }

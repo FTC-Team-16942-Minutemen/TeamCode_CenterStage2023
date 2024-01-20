@@ -62,6 +62,8 @@ public class BlueLeftAuton {
 
     public Command generate()
     {
+       // return new WaitCommand(0).andThen(m_driveSS.runTrajectory("BlueLeft/StartTuner"));
+
         return new WaitCommand(0)
                 .andThen(m_intake.stateChangeCommand())
                 .andThen(new ConditionalCommand(
@@ -69,73 +71,67 @@ public class BlueLeftAuton {
                         new WaitCommand(0),
                         (()-> m_vision.getLocation() == 0)))
                 .andThen(new ConditionalCommand(
-                        new TrajectoryFollowerCommand(m_driveSS, "BlueLeft/BLGround",30,30),
+                        new TrajectoryFollowerCommand(m_driveSS, "BlueLeft/BLGround1",40,40),
                         new WaitCommand(0),
                         (()-> m_vision.getLocation() == 1)))
                 .andThen(new ConditionalCommand(
-                      new TrajectoryFollowerCommand(m_driveSS, "BlueLeft/BLGround2",30,30),
+                      new TrajectoryFollowerCommand(m_driveSS, "BlueLeft/BLGround2",40,40),
                         new WaitCommand(0),
                         (()-> m_vision.getLocation() == 2)))
                 .andThen(m_intake.changePoseCommand(0))
                 .andThen(new WaitCommand(200))
-                .andThen(m_intake.intakeCommand(-0.3))
+                .andThen(m_intake.intakeCommand(-0.45))
                 .andThen(new WaitCommand(600))
                 .andThen(m_intake.stopCommand())
+
                 .andThen(m_intake.stateChangeCommand())
                 .andThen(new ConditionalCommand(
                         m_driveSS.runTrajectory("BlueLeft/BLDeposit0",40,40),
                         new WaitCommand(0),
                         (()-> m_vision.getLocation() == 0)))
                 .andThen(new ConditionalCommand(
-                        m_driveSS.runTrajectory("BlueLeft/BLDeposit0",30,30),
+                        m_driveSS.runTrajectory("BlueLeft/BLDeposit1",40,40),
                         new WaitCommand(0),
                         (()-> m_vision.getLocation() == 1)))
                 .andThen(new ConditionalCommand(
-                        m_driveSS.runTrajectory("BlueLeft/BLDeposit0",30,30),
+                        m_driveSS.runTrajectory("BlueLeft/BLDeposit2",40,40),
                         new WaitCommand(0),
                         (()-> m_vision.getLocation() == 2)))
-                .andThen(m_linearSlideSubsystem.setAndExtendCommand("auton"))
+                .andThen(m_linearSlideSubsystem.setAndExtendCommand("LOWLOW"))
                 .andThen(new WaitCommand(500))
                 .andThen(m_casset.depositBothCommand())
                 .andThen(new WaitCommand(200))
+
                 .andThen(new ParallelCommandGroup( new TrajectoryFollowerCommand(m_driveSS, "BlueLeft/BCycleTo",40,40),
                         new SequentialCommandGroup(new WaitCommand(500), m_linearSlideSubsystem.setAndExtendCommand("ZERO"),
                               m_casset.intakePoseCommand(),
                                 new WaitCommand(500)
-                                        .andThen(m_intake.changePoseCommand(4))
+                                        .andThen(m_intake.changePoseCommand(3))
                                         .andThen(m_intake.stateChangeCommand())
-                                        .andThen(m_intake.intakeCommand(1.0))
                         )))
-                      .andThen(new WaitCommand(300))
-                .andThen(new ParallelCommandGroup(m_driveSS.runTrajectory("BlueLeft/BShimmy"),
-                        new SequentialCommandGroup(new WaitCommand(200), m_intake.changePoseCommand(3)
-                        ))
-                        .andThen(new WaitCommand(1200))
+                     .andThen(m_intake.intakeCommand(1.0))
+                        .andThen(new WaitCommand(1400))
                         .andThen(m_intake.stopCommand())
                           .andThen(m_intake.stateChangeCommand())
                 .andThen(new ParallelCommandGroup(m_driveSS.runTrajectory("BlueLeft/BCycleBack",45,45),
                         new SequentialCommandGroup(new WaitCommand(1400),
                                 m_linearSlideSubsystem.setAndExtendCommand("LOW"))
-                                )))
+                                ))
                         .andThen(new WaitCommand(100))
                         .andThen(m_casset.depositBothCommand())
                         .andThen(new WaitCommand(100))
-                .andThen(new ParallelCommandGroup( new TrajectoryFollowerCommand(m_driveSS, "BlueLeft/BCycleTo2",40,40),
+                .andThen(new ParallelCommandGroup( new TrajectoryFollowerCommand(m_driveSS, "BlueLeft/BCycleTo2",45,45),
                         new SequentialCommandGroup(new WaitCommand(500), m_linearSlideSubsystem.setAndExtendCommand("ZERO"),
                                 m_casset.intakePoseCommand(),
                                 new WaitCommand(500)
-                                        .andThen(m_intake.changePoseCommand(2))
+                                        .andThen(m_intake.changePoseCommand(1))
                                         .andThen(m_intake.stateChangeCommand())
-                                        .andThen(m_intake.intakeCommand(1.0))
                         )))
-                        .andThen(new WaitCommand(300))
-                        .andThen(new ParallelCommandGroup(m_driveSS.runTrajectory("BlueLeft/BShimmy"),
-                                new SequentialCommandGroup(new WaitCommand(200), m_intake.changePoseCommand(1)
-                                )))
-                .andThen(new WaitCommand(1200))
+
+                .andThen(m_intake.intakeCommand(1.0))
+                .andThen(new WaitCommand(1400))
                 .andThen(m_intake.stopCommand())
                 .andThen(m_intake.stateChangeCommand())
-                .andThen(new WaitCommand(3000))
                 .andThen(new ParallelCommandGroup(m_driveSS.runTrajectory("BlueLeft/BCycleBack",45,45),
                         new SequentialCommandGroup(new WaitCommand(1400),
                                 m_linearSlideSubsystem.setAndExtendCommand("LOW"))
