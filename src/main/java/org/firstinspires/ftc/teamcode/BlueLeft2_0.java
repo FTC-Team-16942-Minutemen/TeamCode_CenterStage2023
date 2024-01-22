@@ -31,8 +31,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.arcrobotics.ftclib.command.Robot;
-import com.arcrobotics.ftclib.util.Timing;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -43,21 +41,19 @@ import org.firstinspires.ftc.teamcode.robotContainer.RobotContainer;
 Autonomous OpMode script using Command-based Robot
  */
 
-@Autonomous(name="BlueRight_Auton", group="Autonomous")
+@Autonomous(name="BlueLeft2_0", group="Autonomous")
 //@Disabled
-public class BlueRight_Auton extends LinearOpMode {
+public class BlueLeft2_0 extends LinearOpMode {
 
     @Override
     public void runOpMode() {
 
-        //Initialize the robot's Pose
-//        Pose2d initialPose = new Pose2d(new Vector2d( 35.0, 60.0), -90.0);
-//        Pose2d initialPose = new Pose2d(new Vector2d( -40.50, 65.0), Math.toRadians(-90.0));
-        Pose2d initialPose = new Pose2d(new Vector2d( -42, 60.13), Math.toRadians(-270.0));
+        Pose2d initialPose = new Pose2d(new Vector2d(18 , 59.0), Math.toRadians(90.0));
 
+        // Pose2d initialPose = new Pose2d(DistancelocalizerSubsystem.class.);
         //Instantiate the robot
         RobotContainer m_robot = new RobotContainer(
-                Constants.OpModeType.BLUE_RIGHT_AUTO,
+                Constants.OpModeType.BLUE_LEFT_2_0,
                 hardwareMap,
                 telemetry,
                 gamepad1,
@@ -73,7 +69,7 @@ public class BlueRight_Auton extends LinearOpMode {
 //        resetRuntime();
 
         //Disable the parking detection pipeline and start the parking timer countdown
-     m_robot.disableVision();
+        m_robot.disableVision();
 
         // Run the robot until the end of the match (or until the driver presses STOP)
         while (opModeIsActive() && !isStopRequested())
@@ -84,9 +80,7 @@ public class BlueRight_Auton extends LinearOpMode {
 
         //Store the last post of the robot to a static
         PoseStorage.currentPose = m_robot.getRobotPose();
-//        PoseStorage.allianceHeadingOffset = -90.0; //blue side
-        PoseStorage.allianceHeadingOffset = 90.0; //red side
+        PoseStorage.allianceHeadingOffset = -90.0; //blue side
         m_robot.reset();
     }
 }
-

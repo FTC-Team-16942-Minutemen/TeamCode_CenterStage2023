@@ -106,11 +106,14 @@ public class BlueLeftAuton {
                         new SequentialCommandGroup(new WaitCommand(500), m_linearSlideSubsystem.setAndExtendCommand("ZERO"),
                               m_casset.intakePoseCommand(),
                                 new WaitCommand(500)
-                                        .andThen(m_intake.changePoseCommand(3))
+                                        .andThen(m_intake.changePoseCommand(4))
                                         .andThen(m_intake.stateChangeCommand())
+                                        .andThen(m_intake.intakeCommand(1.0))
                         )))
-                     .andThen(m_intake.intakeCommand(1.0))
-                        .andThen(new WaitCommand(1400))
+                       .andThen(new WaitCommand(300))
+                .andThen(new ParallelCommandGroup(m_driveSS.runTrajectory("BlueLeft/BShimmy")),
+                        new SequentialCommandGroup(new WaitCommand(100)), m_intake.changePoseCommand(3))
+                        .andThen(new WaitCommand(1000))
                         .andThen(m_intake.stopCommand())
                           .andThen(m_intake.stateChangeCommand())
                 .andThen(new ParallelCommandGroup(m_driveSS.runTrajectory("BlueLeft/BCycleBack",45,45),
@@ -120,25 +123,25 @@ public class BlueLeftAuton {
                         .andThen(new WaitCommand(100))
                         .andThen(m_casset.depositBothCommand())
                         .andThen(new WaitCommand(100))
-                .andThen(new ParallelCommandGroup( new TrajectoryFollowerCommand(m_driveSS, "BlueLeft/BCycleTo2",45,45),
-                        new SequentialCommandGroup(new WaitCommand(500), m_linearSlideSubsystem.setAndExtendCommand("ZERO"),
-                                m_casset.intakePoseCommand(),
-                                new WaitCommand(500)
-                                        .andThen(m_intake.changePoseCommand(1))
-                                        .andThen(m_intake.stateChangeCommand())
-                        )))
-
-                .andThen(m_intake.intakeCommand(1.0))
-                .andThen(new WaitCommand(1400))
-                .andThen(m_intake.stopCommand())
-                .andThen(m_intake.stateChangeCommand())
-                .andThen(new ParallelCommandGroup(m_driveSS.runTrajectory("BlueLeft/BCycleBack",45,45),
-                        new SequentialCommandGroup(new WaitCommand(1400),
-                                m_linearSlideSubsystem.setAndExtendCommand("LOW"))
-                ))
-
-                .andThen(new WaitCommand(100))
-                .andThen(m_casset.depositBothCommand())
+//                .andThen(new ParallelCommandGroup( new TrajectoryFollowerCommand(m_driveSS, "BlueLeft/BCycleTo2",45,45),
+//                        new SequentialCommandGroup(new WaitCommand(500), m_linearSlideSubsystem.setAndExtendCommand("ZERO"),
+//                                m_casset.intakePoseCommand(),
+//                                new WaitCommand(500)
+//                                        .andThen(m_intake.changePoseCommand(1))
+//                                        .andThen(m_intake.stateChangeCommand())
+//                        )))
+//
+//                .andThen(m_intake.intakeCommand(1.0))
+//                .andThen(new WaitCommand(1400))
+//                .andThen(m_intake.stopCommand())
+//                .andThen(m_intake.stateChangeCommand())
+//                .andThen(new ParallelCommandGroup(m_driveSS.runTrajectory("BlueLeft/BCycleBack",45,45),
+//                        new SequentialCommandGroup(new WaitCommand(1400),
+//                                m_linearSlideSubsystem.setAndExtendCommand("LOW"))
+//                ))
+//
+//                .andThen(new WaitCommand(100))
+//                .andThen(m_casset.depositBothCommand())
                 .andThen(new ParallelCommandGroup(m_driveSS.runTrajectory("BlueRight/BParkLeft"),
                         new SequentialCommandGroup(new WaitCommand(500),
                                 m_linearSlideSubsystem.setAndExtendCommand("ZERO"),

@@ -11,7 +11,11 @@ public final class Constants
         BLUE_RIGHT_AUTO,
         BLUE_LEFT_AUTO,
         RED_RIGHT_AUTO,
-        RED_LEFT_AUTO
+        RED_LEFT_AUTO,
+        BLUE_LEFT_2_0,
+        BLUE_RIGHT_2_0,
+        RED_RIGHT_2_0,
+        RED_LEFT_2_0
     }
 
     public static double H_START_BLUE = 90;

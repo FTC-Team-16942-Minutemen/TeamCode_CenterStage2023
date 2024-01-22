@@ -18,9 +18,9 @@ public class DoubleCassetSubsystem extends SubsystemBase {
     double m_rightPosition;
 
     public static double openPoseR = 0.8;
-    public static double closePoseR = 0.5;
-    public static double openPoseL = 0.8;
-    public static double closePoseL = 0.5;
+    public static double closePoseR = 0.6;
+    public static double openPoseL = 0.85;
+    public static double closePoseL = 0.7;
     public static double minScale = 0.0;
     public static double maxScale = 1.0;
 
@@ -29,6 +29,7 @@ public class DoubleCassetSubsystem extends SubsystemBase {
         m_telemetry = telemetry;
         m_cassetLeftServo = m_hardwareMap.get(Servo.class, "cassetLeft");
         m_cassetRightServo = m_hardwareMap.get(Servo.class, "cassetRight");
+       m_cassetLeftServo.setDirection(Servo.Direction.REVERSE);
         m_leftPosition = closePoseL;
         m_rightPosition = closePoseR;
     }

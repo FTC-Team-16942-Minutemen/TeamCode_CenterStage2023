@@ -31,18 +31,18 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
     @Config
     public class IntakeSubsystem extends SubsystemBase {
         DcMotorEx flyWheel;
-        DcMotorEx flyWheelOutside;
         Servo m_servo;
         public String intakeState = "intake";
         public String stowState = "stow";
         public double m_position = stowPose;
         public static double groundPose = 0.95;
+        public static double travelPose = 0.90;
         public static double topPose = 0.77;
         public static double middlePose = 0.81;
         public static double lowPose = 0.855;
         public static double lowlowPose = 0.885;
         public static double stowPose = 0.47;
-        public static double intakePose = 0.95;
+        public static double intakePose;
         public String desiredState = stowState;
         HardwareMap m_hardwareMap;
         Telemetry m_telemetry;
@@ -186,7 +186,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
             }
             if (decision <= 0) {
                 decision = 0;
-                intakePose = groundPose;
+                intakePose = travelPose;
             }
         }
 
@@ -247,9 +247,21 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
             if (desiredState == stowState) {
                 m_position = stowPose;
             }
+            if(m_position == travelPose){
+                if(flyWheel.getPower() !=  0){
+                    m_position = groundPose;
+                }
+                else{
+                    m_position = travelPose;
+                }
+            }
             m_servo.setPosition(m_position);
             m_servo.scaleRange(minScale, maxScale);
 
         }
+
+
+
+
 
     }

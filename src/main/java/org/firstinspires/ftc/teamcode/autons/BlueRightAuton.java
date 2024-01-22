@@ -45,45 +45,39 @@ public class BlueRightAuton {
         return new WaitCommand(0)
                 .andThen(m_intake.stateChangeCommand())
                 .andThen(new ConditionalCommand(
-                        new TrajectoryFollowerCommand(m_driveSS, "BlueRight/BRGround0", 40, 40),
+                        new TrajectoryFollowerCommand(m_driveSS, "BlueRight/BRGround1", 40, 40),
                         new WaitCommand(0),
                         (()-> m_vision.getLocation() == 0)))
-                .andThen(new ConditionalCommand(
-                        new TrajectoryFollowerCommand(m_driveSS, "BlueRight/BRGround1",40,40),
-                        new WaitCommand(0),
-                        (()-> m_vision.getLocation() == 1)))
                 .andThen(new ConditionalCommand(
                         new TrajectoryFollowerCommand(m_driveSS, "BlueRight/BRGround2",40,40),
                         new WaitCommand(0),
-                        (()-> m_vision.getLocation() == 2)))
-                .andThen(m_intake.changePoseCommand(0))
-                .andThen(new WaitCommand(200))
-                .andThen(m_intake.intakeCommand(-0.5))
-                .andThen(new WaitCommand(3000))
-                .andThen(m_intake.stopCommand())
-                .andThen(m_intake.stateChangeCommand())
+                        (()-> m_vision.getLocation() == 1)))
                 .andThen(new ConditionalCommand(
-                        new ParallelCommandGroup(m_driveSS.runTrajectory("BlueRight/BRToStack0",40,40),
+                        new TrajectoryFollowerCommand(m_driveSS, "BlueRight/BRGround0",40,40),
+                        new WaitCommand(0),
+                        (()-> m_vision.getLocation() == 2)))
+                .andThen(new ConditionalCommand(
+                        new ParallelCommandGroup(m_driveSS.runTrajectory("BlueRight/BRToStack1",30,30),
                         new SequentialCommandGroup(m_intake.intakeCommand(1.0),
                                 m_intake.changePoseCommand(4),
-                                m_intake.stateChangeCommand())),
+                                m_intake.setStateCommand("intake"))),
 
                         new WaitCommand(0),
                         (()-> m_vision.getLocation() == 0)))
                 .andThen(new ConditionalCommand(
-                        new ParallelCommandGroup(m_driveSS.runTrajectory("BlueRight/BRToStack1",40,40),
+                        new ParallelCommandGroup(m_driveSS.runTrajectory("BlueRight/BRToStack2",30,30),
                                 new SequentialCommandGroup(m_intake.intakeCommand(1.0),
                                         m_intake.changePoseCommand(4),
-                                        m_intake.stateChangeCommand())),
+                                        m_intake.setStateCommand("intake"))),
                         new WaitCommand(0),
                         (()-> m_vision.getLocation() == 1)))
 
                 .andThen(new ConditionalCommand(
 
-                        new ParallelCommandGroup(m_driveSS.runTrajectory("BlueRight/BRToStack2",40,40),
+                        new ParallelCommandGroup(m_driveSS.runTrajectory("BlueRight/BRToStack0",30,30),
                                 new SequentialCommandGroup(m_intake.intakeCommand(1.0),
                                         m_intake.changePoseCommand(4),
-                                        m_intake.stateChangeCommand())),
+                                        m_intake.setStateCommand("intake"))),
                         new WaitCommand(0),
                         (()-> m_vision.getLocation() == 2)))
 
@@ -92,25 +86,27 @@ public class BlueRightAuton {
                 .andThen(m_intake.setStateCommand("stow"))
                 .andThen(new WaitCommand(200))
                 .andThen(new ConditionalCommand(
-                        new ParallelCommandGroup( new TrajectoryFollowerCommand(m_driveSS, "BlueRight/BRCycleTo0",40,40),
-                                new SequentialCommandGroup(new WaitCommand(3500), m_linearSlideSubsystem.setAndExtendCommand("auton")
+                        new ParallelCommandGroup( new TrajectoryFollowerCommand(m_driveSS, "BlueRight/BRCycleTo",40,40),
+                                new SequentialCommandGroup(new WaitCommand(3500)
                                 )),
                         new WaitCommand(0),
                         (()-> m_vision.getLocation() == 0)))
                 .andThen(new ConditionalCommand(
-                        new ParallelCommandGroup( new TrajectoryFollowerCommand(m_driveSS, "BlueRight/BRCycleTo1",40,40),
-                                new SequentialCommandGroup(new WaitCommand(3500), m_linearSlideSubsystem.setAndExtendCommand("auton")
+                        new ParallelCommandGroup( new TrajectoryFollowerCommand(m_driveSS, "BlueRight/BRCycleTo2",40,40),
+                                new SequentialCommandGroup(new WaitCommand(3500)
                                 )),
                         new WaitCommand(0),
                         (()-> m_vision.getLocation() == 1)))
                 .andThen(new ConditionalCommand(
-                        new ParallelCommandGroup( new TrajectoryFollowerCommand(m_driveSS, "BlueRight/BRCycleTo2",40,40),
-                                new SequentialCommandGroup(new WaitCommand(3500), m_linearSlideSubsystem.setAndExtendCommand("auton")
+                        new ParallelCommandGroup( new TrajectoryFollowerCommand(m_driveSS, "BlueRight/BRCycleTo0",40,40),
+                                new SequentialCommandGroup(new WaitCommand(3500)
                                 )),
                         new WaitCommand(0),
                         (()-> m_vision.getLocation() == 2)))
 
                 .andThen(new WaitCommand(300))
+                .andThen(m_linearSlideSubsystem.setAndExtendCommand("MEDIUM"))
+                .andThen(new WaitCommand(700))
                 .andThen(m_casset.depositBothCommand())
                 .andThen(new ParallelCommandGroup( new TrajectoryFollowerCommand(m_driveSS, "BlueRight/BRCycleBack",40,40),
                         new SequentialCommandGroup(new WaitCommand(500), m_linearSlideSubsystem.setAndExtendCommand("ZERO"),
@@ -128,12 +124,13 @@ public class BlueRightAuton {
                 .andThen(m_intake.stopCommand())
 
                 .andThen(m_intake.stateChangeCommand())
-                .andThen(new ParallelCommandGroup(m_driveSS.runTrajectory("BlueRight/BRCycleTo1",45,45),
-                        new SequentialCommandGroup(new WaitCommand(3500),
-                                m_linearSlideSubsystem.setAndExtendCommand("LOW"))
+                .andThen(new ParallelCommandGroup(m_driveSS.runTrajectory("BlueRight/BRCycleTo",40,40),
+                        new SequentialCommandGroup(new WaitCommand(3500))
                 ))
 
-                .andThen(new WaitCommand(100))
+                        .andThen(new WaitCommand(300))
+                        .andThen(m_linearSlideSubsystem.setAndExtendCommand("MEDIUM"))
+                .andThen(new WaitCommand(800))
                 .andThen(m_casset.depositBothCommand())
 
 

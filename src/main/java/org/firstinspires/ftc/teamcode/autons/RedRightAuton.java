@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Autons;
+package org.firstinspires.ftc.teamcode.autons;
 
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.ConditionalCommand;
@@ -26,14 +26,12 @@ public class RedRightAuton {
     IntakeSubsystem m_intake;
     LinearSlideSubsystem m_linearSlideSubsystem;
     VisionSubsystem m_vision;
-    Telemetry m_telemetry;
 
     public RedRightAuton(DriveSubsystem driveSubsystem,
                           DoubleCassetSubsystem cassetSubsystem,
                           IntakeSubsystem intakeSubsystem,
                           LinearSlideSubsystem linearSlideSubsystem,
-                         VisionSubsystem visionSubsystem,
-                         Telemetry telemetry
+                         VisionSubsystem visionSubsystem
     )
     {
         m_driveSS = driveSubsystem;
@@ -41,7 +39,6 @@ public class RedRightAuton {
         m_intake = intakeSubsystem;
         m_linearSlideSubsystem = linearSlideSubsystem;
         m_vision = visionSubsystem;
-        m_telemetry = telemetry;
     }
 
     public Command generate() {return new WaitCommand(0)
@@ -51,11 +48,11 @@ public class RedRightAuton {
                     new WaitCommand(0),
                     (()-> m_vision.getLocation() == 0)))
             .andThen(new ConditionalCommand(
-                    new TrajectoryFollowerCommand(m_driveSS, "RedRight/RRGround0",30,30),
+                    new TrajectoryFollowerCommand(m_driveSS, "RedRight/RRGround0",40,40),
                     new WaitCommand(0),
                     (()-> m_vision.getLocation() == 1)))
             .andThen(new ConditionalCommand(
-                    new TrajectoryFollowerCommand(m_driveSS, "RedRight/RRGround0",30,30),
+                    new TrajectoryFollowerCommand(m_driveSS, "RedRight/RRGround0",40,40),
                     new WaitCommand(0),
                     (()-> m_vision.getLocation() == 2)))
             .andThen(m_intake.changePoseCommand(0))
@@ -65,7 +62,7 @@ public class RedRightAuton {
             .andThen(m_intake.stopCommand())
             .andThen(m_intake.stateChangeCommand())
             .andThen(new ConditionalCommand(
-                    m_driveSS.runTrajectory("RedRight/RRDeposit0",40,40),
+                    m_driveSS.runTrajectory("RedRight/RRDeposit0",30,30),
                     new WaitCommand(0),
                     (()-> m_vision.getLocation() == 0)))
             .andThen(new ConditionalCommand(
@@ -80,7 +77,7 @@ public class RedRightAuton {
             .andThen(new WaitCommand(500))
             .andThen(m_casset.depositBothCommand())
             .andThen(new WaitCommand(200))
-            .andThen(new ParallelCommandGroup( new TrajectoryFollowerCommand(m_driveSS, "RedRight/RCycleTo",40,40),
+            .andThen(new ParallelCommandGroup( new TrajectoryFollowerCommand(m_driveSS, "RedRight/RCycleTo",45,45),
                     new SequentialCommandGroup(new WaitCommand(500), m_linearSlideSubsystem.setAndExtendCommand("ZERO"),
                             m_casset.intakePoseCommand(),
                             new WaitCommand(500)
@@ -95,14 +92,14 @@ public class RedRightAuton {
                     .andThen(new WaitCommand(1200))
                     .andThen(m_intake.stopCommand())
                     .andThen(m_intake.stateChangeCommand())
-                    .andThen(new ParallelCommandGroup(m_driveSS.runTrajectory("RedRight/RCycleBack",45,45),
+                    .andThen(new ParallelCommandGroup(m_driveSS.runTrajectory("RedRight/RCycleBack",50,50),
                             new SequentialCommandGroup(new WaitCommand(1400),
                                     m_linearSlideSubsystem.setAndExtendCommand("LOW"))
                     )))
             .andThen(new WaitCommand(100))
             .andThen(m_casset.depositBothCommand())
             .andThen(new WaitCommand(100))
-            .andThen(new ParallelCommandGroup( new TrajectoryFollowerCommand(m_driveSS, "RedRight/RCycleTo2",40,40),
+            .andThen(new ParallelCommandGroup( new TrajectoryFollowerCommand(m_driveSS, "RedRight/RCycleTo",60,60),
                     new SequentialCommandGroup(new WaitCommand(500), m_linearSlideSubsystem.setAndExtendCommand("ZERO"),
                             m_casset.intakePoseCommand(),
                             new WaitCommand(500)

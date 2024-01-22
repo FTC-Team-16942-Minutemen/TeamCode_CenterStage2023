@@ -9,6 +9,7 @@ import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
@@ -19,11 +20,11 @@ import java.util.function.DoubleSupplier;
 
 @Config
 public class LinearSlideSubsystem extends SubsystemBase {
-    private HardwareMap hardwareMap;
+    private HardwareMap m_hardwareMap;
     private DcMotorEx linearSlide;
-    private Telemetry telemetry;
+    private Telemetry m_telemetry;
 
-    private int targetPosition;
+    public int targetPosition;
     public String desiredLevel = "LOWLOW";
 
     public static double k_p = 8.0;
@@ -34,14 +35,14 @@ public class LinearSlideSubsystem extends SubsystemBase {
 
     public static int zero = -15;
 
-    public String m_state;
+    public int adjustment = 0;
 
 
-    public LinearSlideSubsystem(HardwareMap hardwareMap,Telemetry telemetry){
-        this.hardwareMap = hardwareMap;
-        this.telemetry = telemetry;
+    public LinearSlideSubsystem(HardwareMap hardwareMap, Telemetry telemetry){
+        m_hardwareMap = hardwareMap;
+        m_telemetry = telemetry;
 
-        linearSlide = hardwareMap.get(DcMotorEx.class, "LS");
+        linearSlide = m_hardwareMap.get(DcMotorEx.class, "LS");
 
         MotorConfigurationType motorConfigurationType = linearSlide.getMotorType();
         motorConfigurationType.setAchieveableMaxRPMFraction(0.99);
@@ -77,7 +78,6 @@ public class LinearSlideSubsystem extends SubsystemBase {
             targetPosition = Constants.LOWLOW;
         } else if(desiredLevel == "auton"){
             targetPosition = Constants.AUTON;
-
         }
     }
     public void extendToZero()
@@ -102,18 +102,16 @@ public class LinearSlideSubsystem extends SubsystemBase {
     }
 
     public void adjustSlide(DoubleSupplier joystick){
-        linearSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         double power = joystick.getAsDouble();
         double m_power = 0;
         if(power > 0.7){
-            m_power = 0.02;
+            adjustment -= 30;
         } else if(power < -0.7){
-            m_power = -0.02;
-        } else if(power < 0.7 && power > -0.7){
-            m_power = 0;
+            adjustment += 30;
         }
-        linearSlide.setPower(m_power);
     }
+
 //    public void setState(String state){
 //        if(state == "setp"){
 //            m_state = "setp";
@@ -150,11 +148,18 @@ public class LinearSlideSubsystem extends SubsystemBase {
     @Override
     public void periodic(){
 //        if(m_state == "setp") {
+        if(targetPosition == zero){
+            adjustment = 0;
             linearSlide.setTargetPosition(targetPosition);
+        } else {
+            linearSlide.setTargetPosition(targetPosition + adjustment);
+        }
+
+
 
         linearSlide.setVelocityPIDFCoefficients(p, i, d, f);
         linearSlide.setPositionPIDFCoefficients(k_p);
-
+        m_telemetry.addData("linearSlideAdjustment", adjustment);
 
     }
 }

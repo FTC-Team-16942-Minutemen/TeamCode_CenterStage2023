@@ -8,15 +8,10 @@ import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.ParallelCommandGroup;
+import com.arcrobotics.ftclib.command.RepeatCommand;
 import com.arcrobotics.ftclib.command.Robot;
-import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.WaitCommand;
-import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-
-import com.arcrobotics.ftclib.geometry.Rotation2d;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -25,37 +20,25 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 //import org.firstinspires.ftc.teamcode.commands.AutoTargetingDriveCommand;
 
-import org.firstinspires.ftc.teamcode.Autons.RedRightAuton;
 import org.firstinspires.ftc.teamcode.autons.BlueLeftAuton;
+import org.firstinspires.ftc.teamcode.autons.BlueLeftAuton2plus0;
+import org.firstinspires.ftc.teamcode.autons.RedLeftAuton;
+import org.firstinspires.ftc.teamcode.autons.RedRightAuton;
+import org.firstinspires.ftc.teamcode.autons.RedRightAuton2plus0;
 import org.firstinspires.ftc.teamcode.commands.DriveCommand;
 //import org.firstinspires.ftc.teamcode.commands.ParkingCommand;
-import org.firstinspires.ftc.teamcode.commands.TrajectoryFollowerCommand;
-import org.firstinspires.ftc.teamcode.commands.TurnCommand;
 
 
 import org.firstinspires.ftc.teamcode.autons.BlueRightAuton;
-import org.firstinspires.ftc.teamcode.Autons.RedLeftAuton;
-import org.firstinspires.ftc.teamcode.Autons.RedRightAuton;
-import org.firstinspires.ftc.teamcode.commands.AlignmentScoringCommand;
 //import org.firstinspires.ftc.teamcode.commands.AutoTargetingDriveCommand;
-import org.firstinspires.ftc.teamcode.commands.DriveCommand;
 //import org.firstinspires.ftc.teamcode.commands.ParkingCommand;
-import org.firstinspires.ftc.teamcode.commands.RelocalizeOffAprilTags;
-import org.firstinspires.ftc.teamcode.commands.TrajectoryFollowerCommand;
-import org.firstinspires.ftc.teamcode.commands.TurnCommand;
 import org.firstinspires.ftc.teamcode.commands.changeFoldableCommand;
 
 import org.firstinspires.ftc.teamcode.robotContainer.triggers.LeftTriggerTrigger;
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-
 
 
 import org.firstinspires.ftc.teamcode.robotContainer.triggers.RightTriggerTrigger;
-import org.firstinspires.ftc.teamcode.subsystems.AprilVision;
-import org.firstinspires.ftc.teamcode.subsystems.AprilVision2;
 
-import org.firstinspires.ftc.teamcode.subsystems.CassetSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ClimberSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DoubleCassetSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
@@ -120,9 +103,6 @@ public class RobotContainer extends Robot {
             m_intakeSubsystem = new IntakeSubsystem(m_hardwareMap, m_telemetry);
             m_leftTriggerTrigger = new LeftTriggerTrigger(m_gamePad1, 0.05);
 
-            m_climber = new ClimberSubsystem(m_hardwareMap, m_telemetry);
-
-
             m_rightTriggerTrigger2 = new RightTriggerTrigger(m_gamePad2, 0.05);
             m_leftTriggerTrigger2 = new LeftTriggerTrigger(m_gamePad2, 0.05);
             m_visionSubsystem = new VisionSubsystem(m_hardwareMap, m_telemetry);
@@ -171,16 +151,25 @@ public class RobotContainer extends Robot {
                 m_telemetry.addData("Initialize", "BlueRight_Auton");
                 m_telemetry.addData("Location", m_visionSubsystem.getLocation());
                 setupBlueRight_Auton();
+            } else if(type == Constants.OpModeType.BLUE_LEFT_2_0){
+
+                m_telemetry.addData("Initialize", "BlueLeft_2_0");
+                m_telemetry.addData("Location", m_visionSubsystem.getLocation());
+                m_visionSubsystem.setMode("BLUE");
+                setupBlueLeft2_0();
             } else if (type == Constants.OpModeType.BLUE_LEFT_AUTO) {
                 m_telemetry.addData("Initialize", "BlueLeft_Auton");
                 setupBlueLeft_Auton();
             } else if (type == Constants.OpModeType.RED_RIGHT_AUTO) {
                 m_telemetry.addData("Initialize", "RedRight_Auton");
                 m_telemetry.addData("objectPose", m_visionSubsystem.pathNum);
-                //setupRedRight_Auton();
+                setupRedRight_Auton();
             } else if (type == Constants.OpModeType.RED_LEFT_AUTO) {
                 m_telemetry.addData("Initialize", "RedLeft_Auton");
-                //setupRedLeft_Auton();
+                setupRedLeft_Auton();
+            } else if (type == Constants.OpModeType.RED_RIGHT_2_0) {
+                m_telemetry.addData("Initialize", "RedRight_2_0");
+                setupRedRight2_0();
             }
 
             m_telemetry.update();
@@ -246,6 +235,7 @@ public class RobotContainer extends Robot {
 
             m_rightTriggerTrigger2.whileActiveContinuous(
                     m_intakeSubsystem.intakeCommand(() -> m_gamePad2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER))
+
             ).whenInactive(() -> m_intakeSubsystem.stop());
 
             m_gamePad2.getGamepadButton(GamepadKeys.Button.Y)
@@ -272,11 +262,9 @@ public class RobotContainer extends Robot {
             m_gamePad2.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
                     .whenPressed(m_linearSlideSubsystem.changeLevelCommand("LOWLOW"));
 
-//            m_gamePad2.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)
-//                    .whenHeld(new SequentialCommandGroup(
-//                           new InstantCommand(()->m_linearSlideSubsystem.setState("adjust")),
-//                            new InstantCommand(()->   m_linearSlideSubsystem.adjustSlide(()-> m_gamePad2.getRightY()))
-//                    )).whenReleased(new InstantCommand(()-> m_linearSlideSubsystem.setState("setp")));
+            m_gamePad2.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)
+                    .whenHeld(new RepeatCommand(new InstantCommand(
+                            ()->   m_linearSlideSubsystem.adjustSlide(()-> m_gamePad2.getRightY()))));
 
 
             m_gamePad1.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
@@ -321,8 +309,7 @@ public class RobotContainer extends Robot {
                     );
 
             m_gamePad1.getGamepadButton(GamepadKeys.Button.B)
-                    .whenPressed(new InstantCommand(() -> m_linearSlideSubsystem.lowerSlide()))
-                    .whenReleased(new InstantCommand(() -> m_linearSlideSubsystem.resetEncoder()));
+                    .whenPressed(m_cassetSubsystem.intakePoseCommand());
 
 
 //        m_gamePad2.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)
@@ -360,9 +347,14 @@ public class RobotContainer extends Robot {
         }
 
 
-        private void setupBlueLeft_Auton()
+    private void setupBlueLeft_Auton() {
+        BlueLeftAuton blueLeftAuton = new BlueLeftAuton(m_driveTrain, m_cassetSubsystem, m_intakeSubsystem, m_linearSlideSubsystem, m_visionSubsystem);
+        CommandScheduler.getInstance().schedule(blueLeftAuton.generate());
+    }
+
+        private void setupBlueLeft2_0()
         {
-            BlueLeftAuton blueLeftAuton = new BlueLeftAuton(m_driveTrain, m_cassetSubsystem, m_intakeSubsystem, m_linearSlideSubsystem, m_visionSubsystem);
+            BlueLeftAuton2plus0 blueLeftAuton = new BlueLeftAuton2plus0(m_driveTrain, m_cassetSubsystem, m_intakeSubsystem, m_linearSlideSubsystem, m_visionSubsystem);
             CommandScheduler.getInstance().schedule(blueLeftAuton.generate());
         }
 
@@ -371,16 +363,21 @@ public class RobotContainer extends Robot {
             CommandScheduler.getInstance().schedule(blueRightAuton.generate());
         }
 
-//
-//        private void setupRedRight_Auton() {
-//            RedRightAuton redRightAuton = new RedRightAuton(m_driveTrain, m_cassetSubsystem, m_intakeSubsystem, m_linearSlideSubsystem, m_aprilVision, m_telemetry);
-//            CommandScheduler.getInstance().schedule(redRightAuton.generate());
-//        }
-//
-//        private void setupRedLeft_Auton() {
-//            RedLeftAuton redLeftAuton = new RedLeftAuton(m_driveTrain, m_cassetSubsystem, m_intakeSubsystem, m_linearSlideSubsystem, m_aprilVision);
-//            CommandScheduler.getInstance().schedule(redLeftAuton.generate());
-//        }
+
+        private void setupRedRight_Auton() {
+            RedRightAuton redRightAuton = new RedRightAuton(m_driveTrain, m_cassetSubsystem, m_intakeSubsystem, m_linearSlideSubsystem, m_visionSubsystem);
+            CommandScheduler.getInstance().schedule(redRightAuton.generate());
+        }
+
+    private void setupRedRight2_0() {
+        RedRightAuton2plus0 redRightAuton2plus0 = new RedRightAuton2plus0(m_driveTrain, m_cassetSubsystem, m_intakeSubsystem, m_linearSlideSubsystem, m_visionSubsystem);
+        CommandScheduler.getInstance().schedule(redRightAuton2plus0.generate());
+    }
+
+        private void setupRedLeft_Auton() {
+            RedLeftAuton redLeftAuton = new RedLeftAuton(m_driveTrain, m_cassetSubsystem, m_intakeSubsystem, m_linearSlideSubsystem, m_visionSubsystem);
+            CommandScheduler.getInstance().schedule(redLeftAuton.generate());
+        }
 
 
     }

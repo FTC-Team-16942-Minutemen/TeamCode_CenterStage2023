@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Autons;
+package org.firstinspires.ftc.teamcode.autons;
 
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.ConditionalCommand;
@@ -112,6 +112,9 @@ public class RedLeftAuton {
                         (()-> m_vision.getLocation() == 0)))
 
                 .andThen(new WaitCommand(300))
+                .andThen(m_linearSlideSubsystem.setAndExtendCommand("MEDIUM"))
+                .andThen(new WaitCommand(800))
+
                 .andThen(m_casset.depositBothCommand())
                 .andThen(new ParallelCommandGroup( new TrajectoryFollowerCommand(m_driveSS, "RedLeft/RLCycleBack",40,40),
                         new SequentialCommandGroup(new WaitCommand(500), m_linearSlideSubsystem.setAndExtendCommand("ZERO"),
@@ -122,6 +125,7 @@ public class RedLeftAuton {
                                         .andThen(m_intake.intakeCommand(1.0))
                         )))
                 .andThen(new WaitCommand(300))
+
                 .andThen(new ParallelCommandGroup(m_driveSS.runTrajectory("RedLeft/RShimmy"),
                         new SequentialCommandGroup(new WaitCommand(200), m_intake.changePoseCommand(2)
                         )))
@@ -129,12 +133,15 @@ public class RedLeftAuton {
                 .andThen(m_intake.stopCommand())
 
                 .andThen(m_intake.stateChangeCommand())
-                .andThen(new ParallelCommandGroup(m_driveSS.runTrajectory("RedLeft/RLCycleTo1",45,45),
+                .andThen(new ParallelCommandGroup(m_driveSS.runTrajectory("RedLeft/RLCycleTo1",40,40),
                         new SequentialCommandGroup(new WaitCommand(3500),
                                 m_linearSlideSubsystem.setAndExtendCommand("LOW"))
                 ))
 
                 .andThen(new WaitCommand(100))
+                .andThen(new WaitCommand(300))
+                .andThen(m_linearSlideSubsystem.setAndExtendCommand("MEDIUM"))
+                .andThen(new WaitCommand(600))
                 .andThen(m_casset.depositBothCommand())
 
 

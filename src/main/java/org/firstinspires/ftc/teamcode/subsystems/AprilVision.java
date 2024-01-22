@@ -66,7 +66,7 @@ public class AprilVision extends SubsystemBase {
                 .build();
 
         m_backCamera = new VisionPortal.Builder()
-                .addProcessors(m_redProcessor, m_tagProcessorBack)
+                .addProcessors(m_tagProcessorBack)
                 .setCamera(m_hardwareMap.get(WebcamName.class, "Webcam 1"))
                 .setCameraResolution(new Size(width, height))
                 .enableLiveView(true)

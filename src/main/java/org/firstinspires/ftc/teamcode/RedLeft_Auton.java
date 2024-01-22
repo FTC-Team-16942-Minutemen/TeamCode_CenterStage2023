@@ -51,7 +51,7 @@ public class RedLeft_Auton extends LinearOpMode {
         //Initialize the robot's Pose
 //        Pose2d initialPose = new Pose2d(new Vector2d( 35.0, 60.0), -90.0);
 //        Pose2d initialPose = new Pose2d(new Vector2d( 40.50, -65.0), Math.toRadians(90.0));
-        Pose2d initialPose = new Pose2d(new Vector2d( -32, -64.0), Math.toRadians(-270.0));
+        Pose2d initialPose = new Pose2d(new Vector2d( -42, -60.13), Math.toRadians(270.0));
 
         //Instantiate the robot
         RobotContainer m_robot = new RobotContainer(

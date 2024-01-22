@@ -1,6 +1,6 @@
 ---
 startPose:
-  x: -56.92
+  x: -57.0
   y: -36.0
   heading: -3.141592653589793
 startTangent: -0.0
@@ -12,7 +12,7 @@ waypoints:
   tangent: -0.0
   interpolationType: "CONSTANT"
 - position:
-    x: -57.0
+    x: -57.2
     y: -36.0
   heading: 0.0
   tangent: -0.0

@@ -87,11 +87,11 @@ public class BlueDetectPipeline extends OpenCvPipeline {
         float objectAmount = (float) object;
         for (int i = 0; i < 2; i++) {
             // Draw rectangles on the input_withBoxes image
-            Imgproc.rectangle(
+           /* Imgproc.rectangle(
                     input_withBoxes,
                     new Point(i * input.cols() / 2, 0),
                     new Point((i + 1) * input.cols() / 2, input.rows() ),
-                    new Scalar(0, 0, 255), 4);
+                    new Scalar(0, 0, 255), 4);*/
 
             // Extract submatrices from the erodedMask
             cropped = erodedMask.submat(

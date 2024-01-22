@@ -45,7 +45,7 @@ public class AprilVision2 extends SubsystemBase {
         // Create the vision portal by using a builder.
         m_visionPortal = new VisionPortal.Builder()
                 .setCamera(webcam2)
-                .addProcessors(m_redProcessor, m_aprilTagProcessor)
+                .addProcessors(m_aprilTagProcessor)
                 .build();
         m_visionPortal.setProcessorEnabled(m_aprilTagProcessor, false);
 

@@ -53,16 +53,6 @@ public class VisionSubsystem extends SubsystemBase {
 
     public VisionSubsystem(HardwareMap hardwareMap, Telemetry telemetry)
     {
-        m_hardwareMap = hardwareMap;
-        m_telemetry = telemetry;
-        m_blueImagePipeline = new BlueDetectPipeline();
-
-    double fx = 578.272;
-    double fy = 578.272;
-    double cx = 402.145;
-    double cy = 221.506;
-    double tagsize = 0.166;
-    ArrayList<AprilTagDetection> detections;
 
         m_hardwareMap = hardwareMap;
         m_telemetry = telemetry;
