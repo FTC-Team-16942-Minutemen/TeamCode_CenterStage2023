@@ -33,6 +33,8 @@ public class LinearSlideSubsystem extends SubsystemBase {
     public static double d = 1.0;
     public static double f = 15.0;
 
+    public static int adjustmentLevel = 400;
+
     public static int zero = -15;
 
     public int adjustment = 0;
@@ -110,6 +112,13 @@ public class LinearSlideSubsystem extends SubsystemBase {
         } else if(power < -0.7){
             adjustment += 30;
         }
+    }
+    public void setAdjustment(){
+        adjustment += adjustmentLevel;
+    }
+
+    public void resetAdjustment(){
+        adjustment = 0;
     }
 
 //    public void setState(String state){

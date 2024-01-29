@@ -10,6 +10,8 @@ import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.RepeatCommand;
 import com.arcrobotics.ftclib.command.Robot;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 
@@ -318,17 +320,26 @@ public class RobotContainer extends Robot {
 //
 //
             m_gamePad2.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-                    .whenPressed(m_cassetSubsystem.depositRightCommand());
+                    .whenPressed(new SequentialCommandGroup(
+                            m_cassetSubsystem.depositRightCommand(),
+                            new WaitCommand(200),
+                            new InstantCommand(()-> m_linearSlideSubsystem.setAdjustment())
+                            )
+                    ).whenReleased(new InstantCommand(()-> m_linearSlideSubsystem.resetAdjustment()));
+
 
             m_gamePad2.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                    .whenPressed(m_cassetSubsystem.depositLeftPosition());
-
+                    .whenPressed(new SequentialCommandGroup(
+                            m_cassetSubsystem.depositLeftPosition(),
+                            new WaitCommand(200),
+                            new InstantCommand(()-> m_linearSlideSubsystem.setAdjustment())))
+                            .whenReleased(new InstantCommand(()-> m_linearSlideSubsystem.resetAdjustment()));
 
             m_gamePad2.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
                     .whenPressed(m_cassetSubsystem.intakePoseCommand());
 
 
-            m_gamePad1.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON)
+            m_gamePad1.getGamepadButton(GamepadKeys.Button.X)
                     .whenPressed(new InstantCommand(() -> {
                         m_driveTrain.correctHeadingOffset();
                     }));

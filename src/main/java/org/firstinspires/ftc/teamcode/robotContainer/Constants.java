@@ -24,10 +24,10 @@ public final class Constants
     public static double H_START_RED = 0;
     public static double H_END_RED = 9;
 
-    public static int LOW = 1200;
-    public static int MEDIUM = 1300;
-    public static int HIGH = 2000;
-    public static int LOWLOW = 800;
+    public static int LOW = 800;
+    public static int MEDIUM = 1050;
+    public static int HIGH = 1350;
+    public static int LOWLOW = 600;
     public static int AUTON = 1000;
 
     public static double LEFT_SCORE_POSITION_X = 20;

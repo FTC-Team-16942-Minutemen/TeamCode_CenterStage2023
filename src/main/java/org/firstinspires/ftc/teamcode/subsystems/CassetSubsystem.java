@@ -30,7 +30,9 @@ public class CassetSubsystem extends SubsystemBase {
 
 
     public void depositPosition() {
+
         m_position = minScale;
+
     }
 
     public void intakePosition() {
